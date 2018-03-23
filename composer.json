@@ -1,0 +1,47 @@
+{
+    "name": "mediact/static-production-dependency-prototype",
+    "description": "A prototype package to test static production dependency analysis tooling.",
+    "type": "library",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "MediaCT",
+            "email": "info@mediact.nl"
+        },
+        {
+            "name": "Jan-Marten de Boer",
+            "role": "developer"
+        },
+        {
+            "name": "Ashoka de Wit",
+            "role": "developer"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^7.2",
+        "symfony/symfony": "^4.0",
+        "nikic/php-parser": "^3.0"
+    },
+    "require-dev": {
+        "mediact/testing-suite": "@stable"
+    },
+    "extra": {
+        "grumphp": {
+            "config-default-path": "vendor/mediact/testing-suite/config/default/grumphp.yml"
+        }
+    },
+    "archive": {
+        "exclude": [
+            "/.gitignore",
+            "/phpunit.xml",
+            "/phpmd.xml",
+            "/phpstan.neon",
+            "/phpcs.xml",
+            "/bitbucket-pipelines.yml"
+        ]
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
