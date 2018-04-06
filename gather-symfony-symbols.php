@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 /**
  * Copyright MediaCT. All rights reserved.
@@ -7,9 +8,6 @@
 use PhpParser\Error;
 use PhpParser\Node;
 use PhpParser\Node\Name;
-use PhpParser\Node\Stmt\ClassLike;
-use PhpParser\Node\Stmt\Use_;
-use PhpParser\Node\Stmt\UseUse;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\ParserFactory;
@@ -111,10 +109,94 @@ foreach ($files as $file) {
 
 $symbols = $tracker->getSymbols();
 
+$packageFile = new SplFileInfo(getcwd() . '/composer.json');
+$config      = new Composer\Config(
+    true,
+    dirname($packageFile->getRealPath())
+);
+
+$vendorPath = realpath($config->get('vendor-dir', 0)) . DIRECTORY_SEPARATOR;
+$pattern    = sprintf(
+    '/^%s/',
+    preg_quote($vendorPath, '/')
+);
+
+$packages = [];
+
+foreach ($symbols as $symbol) {
+    $reflection = new ReflectionClass($symbol);
+    $file       = $reflection->getFileName();
+    $structure  = explode(
+        DIRECTORY_SEPARATOR,
+        preg_replace($pattern, '', $file),
+        3
+    );
+
+    // This happens when other code extends Composer root code, like:
+    // composer/ClassLoader.php
+    if (count($structure) < 3) {
+        continue;
+    }
+
+    [$vendor, $packageName] = $structure;
+
+    $package = sprintf('%s/%s', $vendor, $packageName);
+
+    if (!array_key_exists($package, $packages)) {
+        $packages[$package] = [];
+    }
+
+    $packages[$package][] = $symbol;
+}
+
+$lock = json_decode(
+    file_get_contents(getcwd() . '/composer.lock'),
+    true
+);
+
+$lockedPackages = array_map(
+    function (array $package) : string {
+        return $package['name'];
+    },
+    $lock['packages']
+);
+
+$lockedDevPackages = array_map(
+    function (array $package) : string {
+        return $package['name'];
+    },
+    $lock['packages-dev']
+);
+
+$errors = [];
+
+foreach ($packages as $package => $symbols) {
+    if (in_array($package, $lockedDevPackages, true)) {
+        $errors[] = [
+            'package' => $package,
+            'message' => sprintf(
+                'Code base is dependent on dev package %s.',
+                $package
+            ),
+            'symbols' => $symbols
+        ];
+
+        continue;
+    }
+
+    if (!in_array($package, $lockedPackages, true)) {
+        $errors[] = [
+            'package' => $package,
+            'message' => sprintf(
+                'Package not installed: %s.',
+                $package
+            ),
+            'symbols' => $symbols
+        ];
+    }
+}
+
 echo json_encode(
-    [
-        'symbols' => $symbols,
-        'count' => count($symbols)
-    ],
-    JSON_PRETTY_PRINT
+    $errors,
+    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
 ) . PHP_EOL;

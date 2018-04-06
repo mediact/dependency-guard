@@ -21,7 +21,8 @@
     "require": {
         "php": "^7.2",
         "symfony/symfony": "^4.0",
-        "nikic/php-parser": "^3.0"
+        "nikic/php-parser": "^3.0",
+        "composer/composer": "^1.6"
     },
     "require-dev": {
         "mediact/testing-suite": "@stable"
