@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Copyright MediaCT. All rights reserved.
+ * https://www.mediact.nl
+ */
+
+require_once __DIR__ . '/autoload.php';
+
+use Composer\Factory;
+use Composer\Console\Application;
+use Mediact\Prodep\Composer\Command\CheckProductionDependencies;
+
+$output = Factory::createOutput();
+$application = new Application();
+
+$application->add(new CheckProductionDependencies());
+$application->setDefaultCommand('check-production-deps', true);
+$application->run(null, $output);

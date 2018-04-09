@@ -27,9 +27,34 @@
     "require-dev": {
         "mediact/testing-suite": "@stable"
     },
+    "autoload": {
+        "classmap": [
+            "src/symfony"
+        ],
+        "exclude-from-classmap": [
+            "**ParentNotExists**",
+            "**Prototype/BadClasses**",
+            "**Doctrine/Test**",
+            "**Fixture**",
+            "**DbalLogger**",
+            "**LazyLoadingValue**",
+            "**AdapterTest**"
+        ],
+        "psr-4": {
+            "Mediact\\Prodep\\": "src"
+        }
+    },
     "extra": {
         "grumphp": {
             "config-default-path": "vendor/mediact/testing-suite/config/default/grumphp.yml"
+        },
+        "prodep": {
+            "exclude": [
+                "Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\BadClasses\\",
+                "Symfony\\Component\\VarDumper\\Tests\\Fixtures\\NotLoadableClass",
+                "Symfony\\Component\\Config\\Tests\\Fixtures\\Bad*",
+                "Symfony\\Component\\Cache\\Tests\\"
+            ]
         }
     },
     "archive": {
