@@ -4,42 +4,29 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\Prodep\Composer\Command;
+namespace Mediact\DependencyGuard\Composer\Command;
 
 use Composer\Command\BaseCommand;
-use Composer\Composer;
-use Mediact\Prodep\Iterator\FileIteratorFactoryInterface;
-use Mediact\Prodep\Composer\Iterator\SourceFileIteratorFactory;
-use Mediact\Prodep\Php\SymbolExtractor;
-use Mediact\Prodep\Php\SymbolExtractorInterface;
-use ReflectionClass;
+use Mediact\DependencyGuard\DependencyGuard;
+use Mediact\DependencyGuard\DependencyGuardInterface;
+use Mediact\DependencyGuard\Php\SymbolInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CheckProductionDependencies extends BaseCommand
 {
-    /** @var FileIteratorFactoryInterface */
-    private $sourceFileFactory;
-
-    /** @var SymbolExtractorInterface */
-    private $extractor;
+    /** @var DependencyGuardInterface */
+    private $guard;
 
     /**
      * Constructor.
      *
-     * @param FileIteratorFactoryInterface|null $sourceFileFactory
-     * @param SymbolExtractorInterface|null     $extractor
+     * @param DependencyGuardInterface|null $guard
      */
-    public function __construct(
-        FileIteratorFactoryInterface $sourceFileFactory = null,
-        SymbolExtractorInterface $extractor = null
-    ) {
-        $this->sourceFileFactory = (
-            $sourceFileFactory ?? new SourceFileIteratorFactory()
-        );
-        $this->extractor         = $extractor ?? new SymbolExtractor();
-
+    public function __construct(DependencyGuardInterface $guard = null)
+    {
+        $this->guard = $guard ?? new DependencyGuard();
         parent::__construct();
     }
 
@@ -68,149 +55,50 @@ class CheckProductionDependencies extends BaseCommand
         InputInterface $input,
         OutputInterface $output
     ): int {
+        $root       = getcwd() . DIRECTORY_SEPARATOR;
         $prompt     = new SymfonyStyle($input, $output);
-        $composer   = $this->getComposer(true);
-        $files      = $this->sourceFileFactory->create($composer);
-        $exclusions = $this->getExclusions($composer);
-        $lock       = $composer->getLocker()->getLockData();
-
-        $packages = $this->extractPackages(
-            $composer->getConfig()->get('vendor-dir', 0),
-            ...$this
-                ->extractor
-                ->extract($files, ...$exclusions)
-                ->getSymbols()
+        $violations = $this->guard->determineViolations(
+            $this->getComposer(true)
         );
 
-        $lockedPackages = array_map(
-            function (array $package) : string {
-                return $package['name'];
-            },
-            $lock['packages']
+        foreach ($violations as $violation) {
+            $prompt->error($violation->getMessage());
+
+            $prompt->listing(
+                array_map(
+                    function (
+                        SymbolInterface $symbol
+                    ) use (
+                        $root
+                    ) : string {
+                        return sprintf(
+                            'Detected <comment>%s</comment> '
+                            . 'in <comment>%s:%d</comment>',
+                            $symbol->getName(),
+                            preg_replace(
+                                sprintf('#^%s#', $root),
+                                '',
+                                $symbol->getFile()
+                            ),
+                            $symbol->getLine()
+                        );
+                    },
+                    iterator_to_array($violation->getSymbols())
+                )
+            );
+        }
+
+        $numViolations = count($violations);
+
+        if ($numViolations === 0) {
+            $prompt->success('No dependency violations encountered!');
+            return 0;
+        }
+
+        $prompt->error(
+            sprintf('Number of dependency violations: %d', $numViolations)
         );
 
-        $lockedDevPackages = array_map(
-            function (array $package) : string {
-                return $package['name'];
-            },
-            $lock['packages-dev']
-        );
-
-        $numErrors = 0;
-
-        foreach ($packages as $package => $symbols) {
-            if (in_array($package, $lockedDevPackages, true)) {
-                $numErrors++;
-
-                $prompt->error(
-                    sprintf(
-                        'Code base is dependent on dev package %s.',
-                        $package
-                    )
-                );
-                $prompt->listing($symbols);
-
-                continue;
-            }
-
-            if (!in_array($package, $lockedPackages, true)) {
-                $numErrors++;
-
-                $prompt->error(
-                    sprintf(
-                        'Package is not installed: %s.',
-                        $package
-                    )
-                );
-                $prompt->listing($symbols);
-            }
-        }
-
-        return $numErrors === 0 ? 0 : 1;
-    }
-
-    /**
-     * Get the exclusions from the Composer root package.
-     *
-     * @param Composer $composer
-     *
-     * @return string[]
-     */
-    private function getExclusions(Composer $composer): array
-    {
-        $extra = $composer->getPackage()->getExtra();
-
-        return $extra['prodep']['exclude'] ?? [];
-    }
-
-    /**
-     * @param string   $vendorPath
-     * @param string[] ...$symbols
-     *
-     * @return string[]
-     */
-    private function extractPackages(
-        string $vendorPath,
-        string ...$symbols
-    ): array {
-        $packages = [];
-
-        foreach ($symbols as $symbol) {
-            $package = $this->extractPackage($vendorPath, $symbol);
-
-            if ($package === null) {
-                continue;
-            }
-
-            if (!array_key_exists($package, $packages)) {
-                $packages[$package] = [];
-            }
-
-            $packages[$package][] = $symbol;
-        }
-
-        return $packages;
-    }
-
-    /**
-     * Extract the package name from the given PHP symbol.
-     *
-     * @param string $vendorPath
-     * @param string $symbol
-     *
-     * @return string|null
-     */
-    private function extractPackage(string $vendorPath, string $symbol): ?string
-    {
-        $reflection = new ReflectionClass($symbol);
-        $file       = $reflection->getFileName();
-
-        // This happens for symbols in the current package.
-        if (strpos($file, $vendorPath) !== 0) {
-            return null;
-        }
-
-        $structure = explode(
-            DIRECTORY_SEPARATOR,
-            preg_replace(
-                sprintf(
-                    '/^%s/',
-                    preg_quote($vendorPath . DIRECTORY_SEPARATOR, '/')
-                ),
-                '',
-                $file
-            ),
-            3
-        );
-
-        // This happens when other code extends Composer root code, like:
-        // composer/ClassLoader.php
-        if (count($structure) < 3) {
-            return null;
-        }
-
-        [$vendor, $package] = $structure;
-
-        return sprintf('%s/%s', $vendor, $package);
+        return 1;
     }
 }

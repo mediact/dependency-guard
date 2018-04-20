@@ -4,7 +4,7 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\Prodep\Php;
+namespace Mediact\DependencyGuard\Php;
 
 use PhpParser\Node;
 use PhpParser\Node\Name;
@@ -13,9 +13,9 @@ use ReflectionClass;
 use Throwable;
 
 class SymbolTracker extends NodeVisitorAbstract implements
-    SymbolContainerInterface
+    SymbolTrackerInterface
 {
-    /** @var bool[] */
+    /** @var bool[]|Name[][] */
     private $symbols = [];
 
     /** @var string[] */
@@ -32,6 +32,8 @@ class SymbolTracker extends NodeVisitorAbstract implements
     }
 
     /**
+     * Track the given node.
+     *
      * @param Node $node
      *
      * @return void
@@ -44,7 +46,11 @@ class SymbolTracker extends NodeVisitorAbstract implements
             $name = $node->toString();
         }
 
-        if ($name === null || array_key_exists($name, $this->symbols)) {
+        if ($name === null
+            || (array_key_exists($name, $this->symbols)
+                && $this->symbols[$name] === false
+            )
+        ) {
             return;
         }
 
@@ -70,7 +76,11 @@ class SymbolTracker extends NodeVisitorAbstract implements
             return;
         }
 
-        $this->symbols[$name] = true;
+        if (!array_key_exists($name, $this->symbols)) {
+            $this->symbols[$name] = [];
+        }
+
+        $this->symbols[$name][] = $node;
     }
 
     /**
@@ -102,10 +112,20 @@ class SymbolTracker extends NodeVisitorAbstract implements
     /**
      * Get the symbols that are present in the tracker.
      *
-     * @return iterable|string[]
+     * @return iterable|Name[][]
      */
     public function getSymbols(): iterable
     {
-        return array_keys(array_filter($this->symbols));
+        return array_reduce(
+            array_filter($this->symbols),
+            function (array $carry, array $names) : array {
+                foreach ($names as $name) {
+                    $carry[] = $name;
+                }
+
+                return $carry;
+            },
+            []
+        );
     }
 }

@@ -4,9 +4,9 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\Prodep\Php;
+namespace Mediact\DependencyGuard\Php;
 
-use Mediact\Prodep\Iterator\FileIteratorInterface;
+use Mediact\DependencyGuard\Iterator\FileIteratorInterface;
 
 interface SymbolExtractorInterface
 {
@@ -16,10 +16,10 @@ interface SymbolExtractorInterface
      * @param FileIteratorInterface $files
      * @param string[]              ...$exclusions
      *
-     * @return SymbolContainerInterface
+     * @return SymbolIteratorInterface
      */
     public function extract(
         FileIteratorInterface $files,
         string ...$exclusions
-    ): SymbolContainerInterface;
+    ): SymbolIteratorInterface;
 }

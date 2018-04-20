@@ -4,14 +4,17 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\Prodep\Php;
+namespace Mediact\DependencyGuard\Php;
 
-interface SymbolContainerInterface
+use PhpParser\Node\Name;
+use PhpParser\NodeVisitor;
+
+interface SymbolTrackerInterface extends NodeVisitor
 {
     /**
      * Get the symbols that are present in the container.
      *
-     * @return iterable|string[]
+     * @return iterable|Name[]
      */
     public function getSymbols(): iterable;
 }

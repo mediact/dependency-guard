@@ -22,7 +22,8 @@
         "php": "^7.2",
         "symfony/symfony": "^4.0",
         "nikic/php-parser": "^3.0",
-        "composer/composer": "^1.6"
+        "composer/composer": "^1.6",
+        "zero-config/cli": "^1.4"
     },
     "require-dev": {
         "mediact/testing-suite": "@stable"
@@ -41,19 +42,23 @@
             "**AdapterTest**"
         ],
         "psr-4": {
-            "Mediact\\Prodep\\": "src"
+            "Mediact\\DependencyGuard\\": "src"
         }
     },
     "extra": {
         "grumphp": {
             "config-default-path": "vendor/mediact/testing-suite/config/default/grumphp.yml"
         },
-        "prodep": {
+        "dependency-guard": {
             "exclude": [
                 "Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\BadClasses\\",
                 "Symfony\\Component\\VarDumper\\Tests\\Fixtures\\NotLoadableClass",
                 "Symfony\\Component\\Config\\Tests\\Fixtures\\Bad*",
                 "Symfony\\Component\\Cache\\Tests\\"
+            ],
+            "ignore": [
+                "monolog/monolog",
+                "phpunit/*"
             ]
         }
     },

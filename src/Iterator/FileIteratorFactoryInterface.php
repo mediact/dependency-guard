@@ -4,7 +4,7 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\Prodep\Iterator;
+namespace Mediact\DependencyGuard\Iterator;
 
 use Composer\Composer;
 

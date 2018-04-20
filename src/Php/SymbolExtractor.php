@@ -4,9 +4,9 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\Prodep\Php;
+namespace Mediact\DependencyGuard\Php;
 
-use Mediact\Prodep\Iterator\FileIteratorInterface;
+use Mediact\DependencyGuard\Iterator\FileIteratorInterface;
 use PhpParser\Error;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
@@ -38,16 +38,13 @@ class SymbolExtractor implements SymbolExtractorInterface
      * @param FileIteratorInterface $files
      * @param string[]              ...$exclusions
      *
-     * @return SymbolContainerInterface
+     * @return SymbolIteratorInterface
      */
     public function extract(
         FileIteratorInterface $files,
         string ...$exclusions
-    ): SymbolContainerInterface {
-        $container = new SymbolTracker(...$exclusions);
-        $traverser = new NodeTraverser();
-
-        $traverser->addVisitor($container);
+    ): SymbolIteratorInterface {
+        $symbols = [];
 
         foreach ($files as $file) {
             if (!$file->isFile() || !$file->isReadable()) {
@@ -64,9 +61,16 @@ class SymbolExtractor implements SymbolExtractorInterface
                 continue;
             }
 
+            $tracker   = new SymbolTracker(...$exclusions);
+            $traverser = new NodeTraverser();
+            $traverser->addVisitor($tracker);
             $traverser->traverse($statements);
+
+            foreach ($tracker->getSymbols() as $node) {
+                $symbols[] = new Symbol($file, $node);
+            }
         }
 
-        return $container;
+        return new SymbolIterator(...$symbols);
     }
 }

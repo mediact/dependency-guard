@@ -4,16 +4,16 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\Prodep\Composer\Iterator;
+namespace Mediact\DependencyGuard\Composer\Iterator;
 
 use AppendIterator;
 use ArrayIterator;
 use Composer\Composer;
 use FilterIterator;
 use Iterator;
-use Mediact\Prodep\Iterator\FileIterator;
-use Mediact\Prodep\Iterator\FileIteratorFactoryInterface;
-use Mediact\Prodep\Iterator\FileIteratorInterface;
+use Mediact\DependencyGuard\Iterator\FileIterator;
+use Mediact\DependencyGuard\Iterator\FileIteratorFactoryInterface;
+use Mediact\DependencyGuard\Iterator\FileIteratorInterface;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;

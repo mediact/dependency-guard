@@ -9,7 +9,7 @@ require_once __DIR__ . '/autoload.php';
 
 use Composer\Factory;
 use Composer\Console\Application;
-use Mediact\Prodep\Composer\Command\CheckProductionDependencies;
+use Mediact\DependencyGuard\Composer\Command\CheckProductionDependencies;
 
 $output = Factory::createOutput();
 $application = new Application();
