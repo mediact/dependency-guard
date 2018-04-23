@@ -23,7 +23,6 @@ class SymbolIterator extends IteratorIterator implements SymbolIteratorInterface
         );
     }
 
-
     /**
      * Get the current symbol.
      *
@@ -32,5 +31,15 @@ class SymbolIterator extends IteratorIterator implements SymbolIteratorInterface
     public function current(): SymbolInterface
     {
         return parent::current();
+    }
+
+    /**
+     * Specify data that should be serialized to JSON.
+     *
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return iterator_to_array($this);
     }
 }

@@ -8,8 +8,12 @@ namespace Mediact\DependencyGuard;
 
 use Countable;
 use Iterator;
+use JsonSerializable;
 
-interface ViolationIteratorInterface extends Iterator, Countable
+interface ViolationIteratorInterface extends
+    Iterator,
+    Countable,
+    JsonSerializable
 {
     /**
      * Get the current violation.

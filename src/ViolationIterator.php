@@ -9,7 +9,8 @@ namespace Mediact\DependencyGuard;
 use ArrayIterator;
 use IteratorIterator;
 
-class ViolationIterator extends IteratorIterator implements ViolationIteratorInterface
+class ViolationIterator extends IteratorIterator implements
+    ViolationIteratorInterface
 {
     /** @var int */
     private $numViolations;
@@ -45,5 +46,15 @@ class ViolationIterator extends IteratorIterator implements ViolationIteratorInt
     public function count(): int
     {
         return $this->numViolations;
+    }
+
+    /**
+     * Specify data that should be serialized to JSON.
+     *
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return iterator_to_array($this);
     }
 }

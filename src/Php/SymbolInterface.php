@@ -6,7 +6,9 @@
 
 namespace Mediact\DependencyGuard\Php;
 
-interface SymbolInterface
+use JsonSerializable;
+
+interface SymbolInterface extends JsonSerializable
 {
     /**
      * Get the name of the symbol.

@@ -58,4 +58,18 @@ class Violation implements ViolationInterface
     {
         return $this->result->getSymbols();
     }
+
+    /**
+     * Specify data that should be serialized to JSON.
+     *
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'message' => $this->message,
+            'package' => $this->getPackage()->getName(),
+            'symbols' => $this->getSymbols()
+        ];
+    }
 }

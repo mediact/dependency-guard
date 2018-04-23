@@ -6,7 +6,9 @@
 
 namespace Mediact\DependencyGuard;
 
-interface ViolationInterface extends CandidateInterface
+use JsonSerializable;
+
+interface ViolationInterface extends CandidateInterface, JsonSerializable
 {
     /**
      * Get the violation message.

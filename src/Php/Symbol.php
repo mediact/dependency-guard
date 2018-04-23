@@ -58,4 +58,18 @@ class Symbol implements SymbolInterface
     {
         return $this->node->getLine();
     }
+
+    /**
+     * Specify data that should be serialized to JSON.
+     *
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'name' => $this->getName(),
+            'file' => $this->getFile(),
+            'line' => $this->getLine()
+        ];
+    }
 }

@@ -7,8 +7,9 @@
 namespace Mediact\DependencyGuard\Php;
 
 use Iterator;
+use JsonSerializable;
 
-interface SymbolIteratorInterface extends Iterator
+interface SymbolIteratorInterface extends Iterator, JsonSerializable
 {
     /**
      * Get the current symbol.
