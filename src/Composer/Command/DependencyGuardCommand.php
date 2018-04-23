@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class CheckProductionDependencies extends BaseCommand
+class DependencyGuardCommand extends BaseCommand
 {
     /** @var DependencyGuardInterface */
     private $guard;
@@ -38,7 +38,7 @@ class CheckProductionDependencies extends BaseCommand
      */
     protected function configure(): void
     {
-        $this->setName('check-production-deps');
+        $this->setName('dependency-guard');
         $this->setDescription(
             'Check Composer dependencies for a --no-dev install.'
         );

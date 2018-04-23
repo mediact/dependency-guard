@@ -9,11 +9,11 @@ require_once __DIR__ . '/autoload.php';
 
 use Composer\Factory;
 use Composer\Console\Application;
-use Mediact\DependencyGuard\Composer\Command\CheckProductionDependencies;
+use Mediact\DependencyGuard\Composer\Command\DependencyGuardCommand;
 
 $output = Factory::createOutput();
 $application = new Application();
 
-$application->add(new CheckProductionDependencies());
-$application->setDefaultCommand('check-production-deps', true);
+$application->add(new DependencyGuardCommand());
+$application->setDefaultCommand('dependency-guard', true);
 $application->run(null, $output);

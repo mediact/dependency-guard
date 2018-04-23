@@ -32,6 +32,9 @@
             "Mediact\\DependencyGuard\\": "src"
         }
     },
+    "bin": [
+        "bin/dependency-guard"
+    ],
     "extra": {
         "grumphp": {
             "config-default-path": "vendor/mediact/testing-suite/config/default/grumphp.yml"

@@ -8,7 +8,7 @@ namespace Mediact\DependencyGuard\Composer;
 
 use Composer\Command\BaseCommand;
 use Composer\Plugin\Capability\CommandProvider as CommandProviderCapability;
-use Mediact\DependencyGuard\Composer\Command\CheckProductionDependencies;
+use Mediact\DependencyGuard\Composer\Command\DependencyGuardCommand;
 
 class CommandProvider implements CommandProviderCapability
 {
@@ -20,7 +20,7 @@ class CommandProvider implements CommandProviderCapability
     public function getCommands(): array
     {
         return [
-            new CheckProductionDependencies()
+            new DependencyGuardCommand()
         ];
     }
 }
