@@ -1,7 +1,7 @@
 {
-    "name": "mediact/static-production-dependency-prototype",
-    "description": "A prototype package to test static production dependency analysis tooling.",
-    "type": "library",
+    "name": "mediact/dependency-guard",
+    "description": "Static production dependency analysis.",
+    "type": "composer-plugin",
     "license": "proprietary",
     "authors": [
         {
@@ -20,27 +20,14 @@
     "minimum-stability": "stable",
     "require": {
         "php": "^7.2",
-        "symfony/symfony": "^4.0",
-        "nikic/php-parser": "^3.0",
+        "composer-plugin-api": "^1.1",
         "composer/composer": "^1.6",
-        "zero-config/cli": "^1.4"
+        "nikic/php-parser": "^3.0"
     },
     "require-dev": {
         "mediact/testing-suite": "@stable"
     },
     "autoload": {
-        "classmap": [
-            "src/symfony"
-        ],
-        "exclude-from-classmap": [
-            "**ParentNotExists**",
-            "**Prototype/BadClasses**",
-            "**Doctrine/Test**",
-            "**Fixture**",
-            "**DbalLogger**",
-            "**LazyLoadingValue**",
-            "**AdapterTest**"
-        ],
         "psr-4": {
             "Mediact\\DependencyGuard\\": "src"
         }
@@ -49,18 +36,7 @@
         "grumphp": {
             "config-default-path": "vendor/mediact/testing-suite/config/default/grumphp.yml"
         },
-        "dependency-guard": {
-            "exclude": [
-                "Symfony\\Component\\DependencyInjection\\Tests\\Fixtures\\Prototype\\BadClasses\\",
-                "Symfony\\Component\\VarDumper\\Tests\\Fixtures\\NotLoadableClass",
-                "Symfony\\Component\\Config\\Tests\\Fixtures\\Bad*",
-                "Symfony\\Component\\Cache\\Tests\\"
-            ],
-            "ignore": [
-                "monolog/monolog",
-                "phpunit/*"
-            ]
-        }
+        "class": "Mediact\\DependencyGuard\\Composer\\Plugin"
     },
     "archive": {
         "exclude": [
