@@ -11,12 +11,17 @@ use Composer\Composer;
 use Mediact\DependencyGuard\DependencyGuard;
 use Mediact\DependencyGuard\DependencyGuardInterface;
 use Mediact\DependencyGuard\Php\SymbolInterface;
+use Mediact\DependencyGuard\ViolationIteratorInterface;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class DependencyGuardCommand extends BaseCommand
 {
+    public const FORMAT_TEXT = 'text';
+    public const FORMAT_JSON = 'json';
+
     /** @var DependencyGuardInterface */
     private $guard;
 
@@ -42,6 +47,26 @@ class DependencyGuardCommand extends BaseCommand
         $this->setDescription(
             'Check Composer dependencies for a --no-dev install.'
         );
+
+        $this->addOption(
+            'format',
+            'f',
+            InputOption::VALUE_REQUIRED,
+            'The output format. '
+                . implode(
+                    ', ',
+                    array_map(
+                        function (string $format) : string {
+                            return sprintf('<comment>%s</comment>', $format);
+                        },
+                        [
+                            static::FORMAT_TEXT,
+                            static::FORMAT_JSON
+                        ]
+                    )
+                ),
+            static::FORMAT_TEXT
+        );
     }
 
     /**
@@ -56,12 +81,61 @@ class DependencyGuardCommand extends BaseCommand
         InputInterface $input,
         OutputInterface $output
     ): int {
-        $root     = getcwd() . DIRECTORY_SEPARATOR;
         $prompt   = new SymfonyStyle($input, $output);
         $composer = $this->getComposer(true);
+        $format   = $input->getOption('format');
 
         $this->registerAutoloader($composer);
         $violations = $this->guard->determineViolations($composer);
+
+        switch ($format) {
+            case static::FORMAT_JSON:
+                $this->outputViolationsJson($prompt, $violations);
+                break;
+
+            case static::FORMAT_TEXT:
+            default:
+                $this->outputViolationsText($prompt, $violations);
+                break;
+        }
+
+
+        return count($violations) > 0 ? 1 : 0;
+    }
+
+    /**
+     * Output the violations as JSON.
+     *
+     * @param SymfonyStyle               $prompt
+     * @param ViolationIteratorInterface $violations
+     *
+     * @return void
+     */
+    private function outputViolationsJson(
+        SymfonyStyle $prompt,
+        ViolationIteratorInterface $violations
+    ): void {
+        $prompt->writeln(
+            json_encode(
+                $violations,
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+            )
+        );
+    }
+
+    /**
+     * Output the violations as text.
+     *
+     * @param SymfonyStyle               $prompt
+     * @param ViolationIteratorInterface $violations
+     *
+     * @return void
+     */
+    private function outputViolationsText(
+        SymfonyStyle $prompt,
+        ViolationIteratorInterface $violations
+    ): void {
+        $root = getcwd() . DIRECTORY_SEPARATOR;
 
         foreach ($violations as $violation) {
             $prompt->error($violation->getMessage());
@@ -94,14 +168,13 @@ class DependencyGuardCommand extends BaseCommand
 
         if ($numViolations === 0) {
             $prompt->success('No dependency violations encountered!');
-            return 0;
+
+            return;
         }
 
         $prompt->error(
             sprintf('Number of dependency violations: %d', $numViolations)
         );
-
-        return 1;
     }
 
     /**
