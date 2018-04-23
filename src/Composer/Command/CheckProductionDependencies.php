@@ -7,6 +7,7 @@
 namespace Mediact\DependencyGuard\Composer\Command;
 
 use Composer\Command\BaseCommand;
+use Composer\Composer;
 use Mediact\DependencyGuard\DependencyGuard;
 use Mediact\DependencyGuard\DependencyGuardInterface;
 use Mediact\DependencyGuard\Php\SymbolInterface;
@@ -55,11 +56,12 @@ class CheckProductionDependencies extends BaseCommand
         InputInterface $input,
         OutputInterface $output
     ): int {
-        $root       = getcwd() . DIRECTORY_SEPARATOR;
-        $prompt     = new SymfonyStyle($input, $output);
-        $violations = $this->guard->determineViolations(
-            $this->getComposer(true)
-        );
+        $root     = getcwd() . DIRECTORY_SEPARATOR;
+        $prompt   = new SymfonyStyle($input, $output);
+        $composer = $this->getComposer(true);
+
+        $this->registerAutoloader($composer);
+        $violations = $this->guard->determineViolations($composer);
 
         foreach ($violations as $violation) {
             $prompt->error($violation->getMessage());
@@ -100,5 +102,25 @@ class CheckProductionDependencies extends BaseCommand
         );
 
         return 1;
+    }
+
+    /**
+     * Register the autoloader for the current project, so subject classes can
+     * be automatically loaded.
+     *
+     * @param Composer $composer
+     *
+     * @return void
+     */
+    private function registerAutoloader(Composer $composer): void
+    {
+        $config     = $composer->getConfig();
+        $vendor     = $config->get('vendor-dir', 0);
+        $autoloader = $vendor . DIRECTORY_SEPARATOR . 'autoload.php';
+
+        if (is_readable($autoloader)) {
+            /** @noinspection PhpIncludeInspection */
+            require_once $autoloader;
+        }
     }
 }

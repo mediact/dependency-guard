@@ -22,7 +22,12 @@ class ViolationFilter implements ViolationFilterInterface
     {
         $extra = $composer->getPackage()->getExtra();
 
-        $this->ignorePatterns = $extra['dependency-guard']['ignore'] ?? [];
+        $this->ignorePatterns = array_merge(
+            $extra['dependency-guard']['ignore'] ?? [],
+            array_keys(
+                $composer->getPackage()->getSuggests()
+            )
+        );
     }
 
     /**
