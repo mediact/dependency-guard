@@ -8,31 +8,35 @@ namespace Mediact\DependencyGuard\Composer\Command;
 
 use Composer\Command\BaseCommand;
 use Composer\Composer;
+use Mediact\DependencyGuard\Composer\Command\Exporter\ViolationExporterFactory;
+use Mediact\DependencyGuard\Composer\Command\Exporter\ViolationExporterFactoryInterface;
 use Mediact\DependencyGuard\DependencyGuard;
 use Mediact\DependencyGuard\DependencyGuardInterface;
-use Mediact\DependencyGuard\Php\SymbolInterface;
-use Mediact\DependencyGuard\ViolationIteratorInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class DependencyGuardCommand extends BaseCommand
 {
-    public const FORMAT_TEXT = 'text';
-    public const FORMAT_JSON = 'json';
-
     /** @var DependencyGuardInterface */
     private $guard;
+
+    /** @var ViolationExporterFactoryInterface */
+    private $exporterFactory;
 
     /**
      * Constructor.
      *
-     * @param DependencyGuardInterface|null $guard
+     * @param DependencyGuardInterface|null          $guard
+     * @param ViolationExporterFactoryInterface|null $exporterFactory
      */
-    public function __construct(DependencyGuardInterface $guard = null)
-    {
-        $this->guard = $guard ?? new DependencyGuard();
+    public function __construct(
+        DependencyGuardInterface $guard = null,
+        ViolationExporterFactoryInterface $exporterFactory = null
+    ) {
+        $this->guard           = $guard ?? new DependencyGuard();
+        $this->exporterFactory = $exporterFactory ?? new ViolationExporterFactory();
+
         parent::__construct();
     }
 
@@ -59,13 +63,10 @@ class DependencyGuardCommand extends BaseCommand
                         function (string $format) : string {
                             return sprintf('<comment>%s</comment>', $format);
                         },
-                        [
-                            static::FORMAT_TEXT,
-                            static::FORMAT_JSON
-                        ]
+                        $this->exporterFactory->getOutputFormats()
                     )
                 ),
-            static::FORMAT_TEXT
+            ViolationExporterFactoryInterface::DEFAULT_FORMAT
         );
     }
 
@@ -81,100 +82,15 @@ class DependencyGuardCommand extends BaseCommand
         InputInterface $input,
         OutputInterface $output
     ): int {
-        $prompt   = new SymfonyStyle($input, $output);
         $composer = $this->getComposer(true);
-        $format   = $input->getOption('format');
 
         $this->registerAutoloader($composer);
         $violations = $this->guard->determineViolations($composer);
 
-        switch ($format) {
-            case static::FORMAT_JSON:
-                $this->outputViolationsJson($prompt, $violations);
-                break;
-
-            case static::FORMAT_TEXT:
-            default:
-                $this->outputViolationsText($prompt, $violations);
-                break;
-        }
-
+        $exporter = $this->exporterFactory->create($input, $output);
+        $exporter->export($violations);
 
         return count($violations) > 0 ? 1 : 0;
-    }
-
-    /**
-     * Output the violations as JSON.
-     *
-     * @param SymfonyStyle               $prompt
-     * @param ViolationIteratorInterface $violations
-     *
-     * @return void
-     */
-    private function outputViolationsJson(
-        SymfonyStyle $prompt,
-        ViolationIteratorInterface $violations
-    ): void {
-        $prompt->writeln(
-            json_encode(
-                $violations,
-                JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
-            )
-        );
-    }
-
-    /**
-     * Output the violations as text.
-     *
-     * @param SymfonyStyle               $prompt
-     * @param ViolationIteratorInterface $violations
-     *
-     * @return void
-     */
-    private function outputViolationsText(
-        SymfonyStyle $prompt,
-        ViolationIteratorInterface $violations
-    ): void {
-        $root = getcwd() . DIRECTORY_SEPARATOR;
-
-        foreach ($violations as $violation) {
-            $prompt->error($violation->getMessage());
-
-            $prompt->listing(
-                array_map(
-                    function (
-                        SymbolInterface $symbol
-                    ) use (
-                        $root
-                    ) : string {
-                        return sprintf(
-                            'Detected <comment>%s</comment> '
-                            . 'in <comment>%s:%d</comment>',
-                            $symbol->getName(),
-                            preg_replace(
-                                sprintf('#^%s#', $root),
-                                '',
-                                $symbol->getFile()
-                            ),
-                            $symbol->getLine()
-                        );
-                    },
-                    iterator_to_array($violation->getSymbols())
-                )
-            );
-        }
-
-        $numViolations = count($violations);
-
-        if ($numViolations === 0) {
-            $prompt->success('No dependency violations encountered!');
-
-            return;
-        }
-
-        $prompt->error(
-            sprintf('Number of dependency violations: %d', $numViolations)
-        );
     }
 
     /**
