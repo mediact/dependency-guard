@@ -20,12 +20,16 @@
     "minimum-stability": "stable",
     "require": {
         "php": "^7.2",
-        "composer-plugin-api": "^1.1",
         "composer/composer": "^1.6",
+        "composer-plugin-api": "^1.1",
         "nikic/php-parser": "^3.0"
     },
     "require-dev": {
-        "mediact/testing-suite": "@stable"
+        "mediact/testing-suite": "@stable",
+        "phpro/grumphp": "~0.1"
+    },
+    "suggest": {
+        "phpro/grumphp": "To run DependencyGuard as GrumPHP Task."
     },
     "autoload": {
         "psr-4": {

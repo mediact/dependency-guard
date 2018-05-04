@@ -30,8 +30,11 @@ class ViolationExporterFactory implements ViolationExporterFactoryInterface
         InputInterface $input,
         OutputInterface $output
     ): ViolationExporterInterface {
-        $format = $input->getOption('format');
-        $class  = (
+        $format = $input->hasOption('format')
+            ? $input->getOption('format')
+            : static::DEFAULT_FORMAT;
+
+        $class = (
             static::EXPORTERS[$format]
             ?? static::EXPORTERS[static::DEFAULT_FORMAT]
         );
