@@ -54,24 +54,7 @@ class SymbolTracker extends NodeVisitorAbstract implements
             return;
         }
 
-        if ($this->isExcluded($name)) {
-            $this->symbols[$name] = false;
-            return;
-        }
-
-        if (!class_exists($name)) {
-            $this->symbols[$name] = false;
-            return;
-        }
-
-        try {
-            $reflection = new ReflectionClass($name);
-        } catch (Throwable $e) {
-            $this->symbols[$name] = false;
-            return;
-        }
-
-        if ($reflection->isInternal()) {
+        if ($this->isExcluded($name) || !$this->isValidClass($name)) {
             $this->symbols[$name] = false;
             return;
         }
@@ -81,6 +64,28 @@ class SymbolTracker extends NodeVisitorAbstract implements
         }
 
         $this->symbols[$name][] = $node;
+    }
+
+    /**
+     * Check whether the given symbol name is a valid class name.
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    private function isValidClass(string $name): bool
+    {
+        if (!class_exists($name)) {
+            return false;
+        }
+
+        try {
+            $reflection = new ReflectionClass($name);
+        } catch (Throwable $e) {
+            return false;
+        }
+
+        return !$reflection->isInternal();
     }
 
     /**
