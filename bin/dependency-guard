@@ -14,6 +14,7 @@ use Mediact\DependencyGuard\Composer\Command\DependencyGuardCommand;
 $output = Factory::createOutput();
 $application = new Application();
 
-$application->add(new DependencyGuardCommand());
-$application->setDefaultCommand('dependency-guard', true);
+$command = new DependencyGuardCommand();
+$application->add($command);
+$application->setDefaultCommand($command->getName(), true);
 $application->run(null, $output);
