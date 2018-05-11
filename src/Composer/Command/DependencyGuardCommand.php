@@ -18,6 +18,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DependencyGuardCommand extends BaseCommand
 {
+    public const EXIT_NO_VIOLATIONS = 0;
+    public const EXIT_VIOLATIONS    = 1;
+
     /** @var DependencyGuardInterface */
     private $guard;
 
@@ -90,7 +93,9 @@ class DependencyGuardCommand extends BaseCommand
         $exporter = $this->exporterFactory->create($input, $output);
         $exporter->export($violations);
 
-        return count($violations) > 0 ? 1 : 0;
+        return count($violations) > 0
+            ? static::EXIT_VIOLATIONS
+            : static::EXIT_NO_VIOLATIONS;
     }
 
     /**
