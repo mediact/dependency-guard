@@ -7,15 +7,13 @@
 namespace Mediact\DependencyGuard\GrumPHP;
 
 use Composer\Composer;
-use Composer\Factory;
-use Composer\IO\BufferIO;
 use GrumPHP\Runner\TaskResult;
 use GrumPHP\Runner\TaskResultInterface;
 use GrumPHP\Task\Context\ContextInterface;
 use GrumPHP\Task\Context\GitPreCommitContext;
 use GrumPHP\Task\Context\RunContext;
 use GrumPHP\Task\TaskInterface;
-use Mediact\DependencyGuard\DependencyGuard as Guard;
+use Mediact\DependencyGuard\DependencyGuardFactoryInterface;
 use Mediact\DependencyGuard\Exporter\ViolationExporterInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -24,18 +22,29 @@ class DependencyGuard implements TaskInterface
     /** @var Composer */
     private $composer;
 
+    /** @var DependencyGuardFactoryInterface */
+    private $guardFactory;
+
     /** @var ViolationExporterInterface */
     private $exporter;
 
     /**
      * Constructor.
      *
-     * @param ViolationExporterInterface $exporter
+     * @param Composer                        $composer
+     * @param DependencyGuardFactoryInterface $guardFactory
+     * @param ViolationExporterInterface      $exporter
      */
-    public function __construct(ViolationExporterInterface $exporter)
-    {
-        $this->exporter = $exporter;
+    public function __construct(
+        Composer $composer,
+        DependencyGuardFactoryInterface $guardFactory,
+        ViolationExporterInterface $exporter
+    ) {
+        $this->composer     = $composer;
+        $this->guardFactory = $guardFactory;
+        $this->exporter     = $exporter;
     }
+
 
     /**
      * @return string
@@ -83,9 +92,8 @@ class DependencyGuard implements TaskInterface
             }
         }
 
-        $composer   = $this->getComposer();
-        $guard      = new Guard();
-        $violations = $guard->determineViolations($composer);
+        $guard      = $this->guardFactory->create();
+        $violations = $guard->determineViolations($this->composer);
 
         if (count($violations)) {
             $this->exporter->export($violations);
@@ -98,20 +106,6 @@ class DependencyGuard implements TaskInterface
         }
 
         return TaskResult::createPassed($this, $context);
-    }
-
-    /**
-     * Get the composer instance.
-     *
-     * @return Composer
-     */
-    private function getComposer(): Composer
-    {
-        if ($this->composer === null) {
-            $this->composer = Factory::create(new BufferIO());
-        }
-
-        return $this->composer;
     }
 
     /**

@@ -7,10 +7,13 @@
 namespace Mediact\DependencyGuard;
 
 use Composer\Composer;
-use Mediact\DependencyGuard\Composer\Iterator\SourceFileIteratorFactory;
 use Mediact\DependencyGuard\Iterator\FileIteratorFactoryInterface;
-use Mediact\DependencyGuard\Php\SymbolExtractor;
+use Mediact\DependencyGuard\Php\Filter\SymbolFilterFactoryInterface;
 use Mediact\DependencyGuard\Php\SymbolExtractorInterface;
+use Mediact\DependencyGuard\Violation\Filter\ViolationFilterFactoryInterface;
+use Mediact\DependencyGuard\Violation\Finder\ViolationFinderInterface;
+use Mediact\DependencyGuard\Violation\ViolationIterator;
+use Mediact\DependencyGuard\Violation\ViolationIteratorInterface;
 
 class DependencyGuard implements DependencyGuardInterface
 {
@@ -20,26 +23,36 @@ class DependencyGuard implements DependencyGuardInterface
     /** @var SymbolExtractorInterface */
     private $extractor;
 
-    /** @var ViolationFinderInterface|null */
+    /** @var SymbolFilterFactoryInterface */
+    private $symbolFilterFactory;
+
+    /** @var ViolationFinderInterface */
     private $finder;
+
+    /** @var ViolationFilterFactoryInterface */
+    private $violationFilterFactory;
 
     /**
      * Constructor.
      *
-     * @param FileIteratorFactoryInterface|null $sourceFileFactory
-     * @param SymbolExtractorInterface|null     $extractor
-     * @param ViolationFinderInterface|null     $finder
+     * @param FileIteratorFactoryInterface    $sourceFileFactory
+     * @param SymbolExtractorInterface        $extractor
+     * @param SymbolFilterFactoryInterface    $symbolFilterFactory
+     * @param ViolationFinderInterface        $finder
+     * @param ViolationFilterFactoryInterface $resultFilterFactory
      */
     public function __construct(
-        FileIteratorFactoryInterface $sourceFileFactory = null,
-        SymbolExtractorInterface $extractor = null,
-        ViolationFinderInterface $finder = null
+        FileIteratorFactoryInterface $sourceFileFactory,
+        SymbolExtractorInterface $extractor,
+        SymbolFilterFactoryInterface $symbolFilterFactory,
+        ViolationFinderInterface $finder,
+        ViolationFilterFactoryInterface $resultFilterFactory
     ) {
-        $this->sourceFileFactory = (
-            $sourceFileFactory ?? new SourceFileIteratorFactory()
-        );
-        $this->extractor         = $extractor ?? new SymbolExtractor();
-        $this->finder            = $finder ?? new ViolationFinder();
+        $this->sourceFileFactory      = $sourceFileFactory;
+        $this->extractor              = $extractor;
+        $this->symbolFilterFactory    = $symbolFilterFactory;
+        $this->finder                 = $finder;
+        $this->violationFilterFactory = $resultFilterFactory;
     }
 
     /**
@@ -51,30 +64,16 @@ class DependencyGuard implements DependencyGuardInterface
      */
     public function determineViolations(Composer $composer): ViolationIteratorInterface
     {
-        $files      = $this->sourceFileFactory->create($composer);
-        $exclusions = $this->getExclusions($composer);
-        $symbols    = $this->extractor->extract($files, ...$exclusions);
-        $violations = $this->finder->find($composer, $symbols);
+        $files        = $this->sourceFileFactory->create($composer);
+        $symbolFilter = $this->symbolFilterFactory->create($composer);
+        $symbols      = $this->extractor->extract($files, $symbolFilter);
+        $violations   = $this->finder->find($composer, $symbols);
 
         return new ViolationIterator(
             ...array_filter(
                 iterator_to_array($violations),
-                new ViolationFilter($composer)
+                $this->violationFilterFactory->create($composer)
             )
         );
-    }
-
-    /**
-     * Get the exclusions from the Composer root package.
-     *
-     * @param Composer $composer
-     *
-     * @return string[]
-     */
-    private function getExclusions(Composer $composer): array
-    {
-        $extra = $composer->getPackage()->getExtra();
-
-        return $extra['dependency-guard']['exclude'] ?? [];
     }
 }

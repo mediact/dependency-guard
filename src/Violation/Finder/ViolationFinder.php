@@ -4,12 +4,20 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\DependencyGuard;
+namespace Mediact\DependencyGuard\Violation\Finder;
 
 use Composer\Composer;
 use Composer\Package\PackageInterface;
+use Mediact\DependencyGuard\Candidate\Candidate;
+use Mediact\DependencyGuard\Candidate\CandidateExtractor;
+use Mediact\DependencyGuard\Candidate\CandidateExtractorInterface;
+use Mediact\DependencyGuard\Candidate\CandidateInterface;
 use Mediact\DependencyGuard\Php\SymbolIterator;
 use Mediact\DependencyGuard\Php\SymbolIteratorInterface;
+use Mediact\DependencyGuard\Violation\Violation;
+use Mediact\DependencyGuard\Violation\ViolationInterface;
+use Mediact\DependencyGuard\Violation\ViolationIterator;
+use Mediact\DependencyGuard\Violation\ViolationIteratorInterface;
 
 class ViolationFinder implements ViolationFinderInterface
 {

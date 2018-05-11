@@ -30,4 +30,11 @@ interface SymbolInterface extends JsonSerializable
      * @return int
      */
     public function getLine(): int;
+
+    /**
+     * Convert the symbol to a string.
+     *
+     * @return string
+     */
+    public function __toString(): string;
 }

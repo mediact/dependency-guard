@@ -10,8 +10,8 @@ use Composer\Command\BaseCommand;
 use Composer\Composer;
 use Mediact\DependencyGuard\Composer\Command\Exporter\ViolationExporterFactory;
 use Mediact\DependencyGuard\Composer\Command\Exporter\ViolationExporterFactoryInterface;
-use Mediact\DependencyGuard\DependencyGuard;
-use Mediact\DependencyGuard\DependencyGuardInterface;
+use Mediact\DependencyGuard\DependencyGuardFactory;
+use Mediact\DependencyGuard\DependencyGuardFactoryInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,8 +21,8 @@ class DependencyGuardCommand extends BaseCommand
     public const EXIT_NO_VIOLATIONS = 0;
     public const EXIT_VIOLATIONS    = 1;
 
-    /** @var DependencyGuardInterface */
-    private $guard;
+    /** @var DependencyGuardFactoryInterface */
+    private $guardFactory;
 
     /** @var ViolationExporterFactoryInterface */
     private $exporterFactory;
@@ -30,14 +30,14 @@ class DependencyGuardCommand extends BaseCommand
     /**
      * Constructor.
      *
-     * @param DependencyGuardInterface|null          $guard
+     * @param DependencyGuardFactoryInterface|null   $guardFactory
      * @param ViolationExporterFactoryInterface|null $exporterFactory
      */
     public function __construct(
-        DependencyGuardInterface $guard = null,
+        DependencyGuardFactoryInterface $guardFactory = null,
         ViolationExporterFactoryInterface $exporterFactory = null
     ) {
-        $this->guard           = $guard ?? new DependencyGuard();
+        $this->guardFactory    = $guardFactory ?? new DependencyGuardFactory();
         $this->exporterFactory = $exporterFactory ?? new ViolationExporterFactory();
 
         parent::__construct();
@@ -86,9 +86,10 @@ class DependencyGuardCommand extends BaseCommand
         OutputInterface $output
     ): int {
         $composer = $this->getComposer(true);
+        $guard    = $this->guardFactory->create();
 
         $this->registerAutoloader($composer);
-        $violations = $this->guard->determineViolations($composer);
+        $violations = $guard->determineViolations($composer);
 
         $exporter = $this->exporterFactory->create($input, $output);
         $exporter->export($violations);

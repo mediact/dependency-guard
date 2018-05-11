@@ -4,7 +4,7 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\DependencyGuard;
+namespace Mediact\DependencyGuard\Candidate;
 
 use Composer\Composer;
 use Composer\Package\PackageInterface;

@@ -6,7 +6,7 @@
 
 namespace Mediact\DependencyGuard\Exporter;
 
-use Mediact\DependencyGuard\ViolationIteratorInterface;
+use Mediact\DependencyGuard\Violation\ViolationIteratorInterface;
 
 interface ViolationExporterInterface
 {

@@ -4,9 +4,10 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\DependencyGuard;
+namespace Mediact\DependencyGuard\Violation;
 
 use JsonSerializable;
+use Mediact\DependencyGuard\Candidate\CandidateInterface;
 
 interface ViolationInterface extends CandidateInterface, JsonSerializable
 {

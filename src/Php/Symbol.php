@@ -72,4 +72,14 @@ class Symbol implements SymbolInterface
             'line' => $this->getLine()
         ];
     }
+
+    /**
+     * Convert the symbol to a string.
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->getName();
+    }
 }

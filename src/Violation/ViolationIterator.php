@@ -4,7 +4,7 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\DependencyGuard;
+namespace Mediact\DependencyGuard\Violation;
 
 use ArrayIterator;
 use IteratorIterator;

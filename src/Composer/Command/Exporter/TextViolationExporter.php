@@ -8,7 +8,7 @@ namespace Mediact\DependencyGuard\Composer\Command\Exporter;
 
 use Mediact\DependencyGuard\Exporter\ViolationExporterInterface;
 use Mediact\DependencyGuard\Php\SymbolInterface;
-use Mediact\DependencyGuard\ViolationIteratorInterface;
+use Mediact\DependencyGuard\Violation\ViolationIteratorInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class TextViolationExporter implements ViolationExporterInterface

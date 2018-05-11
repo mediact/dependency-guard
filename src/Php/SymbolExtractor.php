@@ -7,6 +7,7 @@
 namespace Mediact\DependencyGuard\Php;
 
 use Mediact\DependencyGuard\Iterator\FileIteratorInterface;
+use Mediact\DependencyGuard\Php\Filter\SymbolFilterInterface;
 use PhpParser\Error;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
@@ -36,13 +37,13 @@ class SymbolExtractor implements SymbolExtractorInterface
      * Extract the PHP symbols from the given files.
      *
      * @param FileIteratorInterface $files
-     * @param string[]              ...$exclusions
+     * @param SymbolFilterInterface $filter
      *
      * @return SymbolIteratorInterface
      */
     public function extract(
         FileIteratorInterface $files,
-        string ...$exclusions
+        SymbolFilterInterface $filter
     ): SymbolIteratorInterface {
         $symbols = [];
 
@@ -61,7 +62,7 @@ class SymbolExtractor implements SymbolExtractorInterface
                 continue;
             }
 
-            $tracker   = new SymbolTracker(...$exclusions);
+            $tracker   = new SymbolTracker($filter);
             $traverser = new NodeTraverser();
             $traverser->addVisitor($tracker);
             $traverser->traverse($statements);

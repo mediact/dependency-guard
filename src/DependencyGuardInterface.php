@@ -7,6 +7,7 @@
 namespace Mediact\DependencyGuard;
 
 use Composer\Composer;
+use Mediact\DependencyGuard\Violation\ViolationIteratorInterface;
 
 interface DependencyGuardInterface
 {

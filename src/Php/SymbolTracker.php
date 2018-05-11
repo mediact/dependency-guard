@@ -6,11 +6,10 @@
 
 namespace Mediact\DependencyGuard\Php;
 
+use Mediact\DependencyGuard\Php\Filter\SymbolFilterInterface;
 use PhpParser\Node;
 use PhpParser\Node\Name;
 use PhpParser\NodeVisitorAbstract;
-use ReflectionClass;
-use Throwable;
 
 class SymbolTracker extends NodeVisitorAbstract implements
     SymbolTrackerInterface
@@ -18,17 +17,17 @@ class SymbolTracker extends NodeVisitorAbstract implements
     /** @var bool[]|Name[][] */
     private $symbols = [];
 
-    /** @var string[] */
-    private $exclusions = [];
+    /** @var SymbolFilterInterface */
+    private $filter;
 
     /**
      * Constructor.
      *
-     * @param string[] ...$exclusions
+     * @param SymbolFilterInterface $filter
      */
-    public function __construct(string ...$exclusions)
+    public function __construct(SymbolFilterInterface $filter)
     {
-        $this->exclusions = $exclusions;
+        $this->filter = $filter;
     }
 
     /**
@@ -54,7 +53,7 @@ class SymbolTracker extends NodeVisitorAbstract implements
             return;
         }
 
-        if ($this->isExcluded($name) || !$this->isValidClass($name)) {
+        if (!$this->filter->__invoke($name)) {
             $this->symbols[$name] = false;
             return;
         }
@@ -64,54 +63,6 @@ class SymbolTracker extends NodeVisitorAbstract implements
         }
 
         $this->symbols[$name][] = $node;
-    }
-
-    /**
-     * Check whether the given symbol name is a valid class name.
-     *
-     * @param string $name
-     *
-     * @return bool
-     */
-    private function isValidClass(string $name): bool
-    {
-        if (!class_exists($name)) {
-            return false;
-        }
-
-        try {
-            $reflection = new ReflectionClass($name);
-        } catch (Throwable $e) {
-            return false;
-        }
-
-        return !$reflection->isInternal();
-    }
-
-    /**
-     * Check whether the given symbol is excluded.
-     *
-     * @param string $symbol
-     *
-     * @return bool
-     */
-    private function isExcluded(string $symbol): bool
-    {
-        return array_reduce(
-            $this->exclusions,
-            function (bool $carry, string $exclusion) use ($symbol) : bool {
-                return (
-                    $carry
-                    || $exclusion === $symbol
-                    || fnmatch($exclusion, $symbol, FNM_PATHNAME | FNM_NOESCAPE)
-                    || (
-                        strpos($symbol, $exclusion) === 0
-                        && preg_match('#\\\\$#', $exclusion)
-                    )
-                );
-            },
-            false
-        );
     }
 
     /**

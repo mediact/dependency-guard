@@ -4,23 +4,24 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\DependencyGuard;
+namespace Mediact\DependencyGuard\Violation\Finder;
 
 use Composer\Composer;
 use Mediact\DependencyGuard\Php\SymbolIteratorInterface;
+use Mediact\DependencyGuard\Violation\ViolationIteratorInterface;
 
-interface CandidateExtractorInterface
+interface ViolationFinderInterface
 {
     /**
-     * Extract violation candidates from the given Composer instance and symbols.
+     * Find violations for the given Composer instance and symbols.
      *
      * @param Composer                $composer
      * @param SymbolIteratorInterface $symbols
      *
-     * @return iterable|CandidateInterface[]
+     * @return ViolationIteratorInterface
      */
-    public function extract(
+    public function find(
         Composer $composer,
         SymbolIteratorInterface $symbols
-    ): iterable;
+    ): ViolationIteratorInterface;
 }

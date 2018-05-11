@@ -4,9 +4,10 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\DependencyGuard;
+namespace Mediact\DependencyGuard\Violation;
 
 use Composer\Package\PackageInterface;
+use Mediact\DependencyGuard\Candidate\CandidateInterface;
 use Mediact\DependencyGuard\Php\SymbolIteratorInterface;
 
 class Violation implements ViolationInterface

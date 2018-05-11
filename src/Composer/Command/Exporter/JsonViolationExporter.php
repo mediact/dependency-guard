@@ -7,7 +7,7 @@
 namespace Mediact\DependencyGuard\Composer\Command\Exporter;
 
 use Mediact\DependencyGuard\Exporter\ViolationExporterInterface;
-use Mediact\DependencyGuard\ViolationIteratorInterface;
+use Mediact\DependencyGuard\Violation\ViolationIteratorInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class JsonViolationExporter implements ViolationExporterInterface

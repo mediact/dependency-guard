@@ -4,7 +4,9 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\DependencyGuard;
+namespace Mediact\DependencyGuard\Violation\Filter;
+
+use Mediact\DependencyGuard\Violation\ViolationInterface;
 
 interface ViolationFilterInterface
 {
