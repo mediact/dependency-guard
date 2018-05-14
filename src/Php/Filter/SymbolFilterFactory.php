@@ -19,24 +19,26 @@ class SymbolFilterFactory implements SymbolFilterFactoryInterface
      */
     public function create(Composer $composer): SymbolFilterInterface
     {
-        return new SymbolFilterChain(
-            new UserDefinedSymbolFilter(),
-            ...array_map(
-                function (string $exclusion) : SymbolFilterInterface {
-                    $filters = [
-                        new ExactSymbolFilter($exclusion),
-                        new PatternSymbolFilter($exclusion)
-                    ];
+        /** @var SymbolFilterInterface[] $filters */
+        $filters = array_map(
+            function (string $exclusion) : SymbolFilterInterface {
+                $filters = [
+                    new ExactSymbolFilter($exclusion),
+                    new PatternSymbolFilter($exclusion)
+                ];
 
-                    if (preg_match('#\\\\$#', $exclusion)) {
-                        $filters[] = new NamespaceSymbolFilter($exclusion);
-                    }
+                if (preg_match('#\\\\$#', $exclusion)) {
+                    $filters[] = new NamespaceSymbolFilter($exclusion);
+                }
 
-                    return new SymbolFilterChain(...$filters);
-                },
-                $this->getExclusions($composer)
-            )
+                return new SymbolFilterChain(...$filters);
+            },
+            $this->getExclusions($composer)
         );
+
+        $filters[] = new UserDefinedSymbolFilter();
+
+        return new SymbolFilterChain(...$filters);
     }
 
     /**
