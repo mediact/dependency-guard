@@ -57,7 +57,8 @@
             "/phpmd.xml",
             "/phpstan.neon",
             "/phpcs.xml",
-            "/bitbucket-pipelines.yml"
+            "/bitbucket-pipelines.yml",
+            "/tests"
         ]
     },
     "config": {
