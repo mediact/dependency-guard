@@ -50,14 +50,8 @@ class ViolationFinder implements ViolationFinderInterface
 
         return new ViolationIterator(
             ...array_merge(
-                $this->determineLockViolations(
-                    $composer,
-                    ...$candidates
-                ),
-                $this->determineUnusedCodeViolations(
-                    $composer,
-                    ...$candidates
-                )
+                $this->determineLockViolations($composer, ...$candidates),
+                $this->determineUnusedCodeViolations($composer, ...$candidates)
             )
         );
     }
@@ -81,14 +75,14 @@ class ViolationFinder implements ViolationFinderInterface
             function (array $package) : string {
                 return $package['name'];
             },
-            $lock['packages']
+            $lock['packages'] ?? []
         );
 
         $lockedDevPackages = array_map(
             function (array $package) : string {
                 return $package['name'];
             },
-            $lock['packages-dev']
+            $lock['packages-dev'] ?? []
         );
 
         foreach ($candidates as $candidate) {

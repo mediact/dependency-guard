@@ -36,6 +36,11 @@
             "Mediact\\DependencyGuard\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Mediact\\DependencyGuard\\Tests\\": "tests"
+        }
+    },
     "bin": [
         "bin/dependency-guard"
     ],
@@ -52,7 +57,8 @@
             "/phpmd.xml",
             "/phpstan.neon",
             "/phpcs.xml",
-            "/bitbucket-pipelines.yml"
+            "/bitbucket-pipelines.yml",
+            "/tests"
         ]
     },
     "config": {
