@@ -74,7 +74,7 @@ class SourceFileIteratorFactory implements FileIteratorFactoryInterface
     /**
      * Create an iterator for the given file paths.
      *
-     * @param string[] ...$paths
+     * @param string ...$paths
      *
      * @return Iterator
      */

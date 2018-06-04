@@ -14,7 +14,7 @@ class SymbolFilterChain implements SymbolFilterInterface
     /**
      * Constructor.
      *
-     * @param SymbolFilterInterface[] ...$filters
+     * @param SymbolFilterInterface ...$filters
      */
     public function __construct(SymbolFilterInterface ...$filters)
     {

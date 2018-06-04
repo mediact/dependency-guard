@@ -15,7 +15,7 @@ use Composer\Plugin\PluginInterface;
 class Plugin implements PluginInterface, Capable
 {
     /**
-     * Anounce the capabilities of the dependency guard plugin.
+     * Announce the capabilities of the dependency guard plugin.
      *
      * @return string[]
      */
