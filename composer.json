@@ -22,7 +22,7 @@
         "php": "^7.2",
         "composer/composer": "^1.6",
         "composer-plugin-api": "^1.1",
-        "nikic/php-parser": "^3.0"
+        "nikic/php-parser": "^3.0 | ^4.0"
     },
     "require-dev": {
         "mediact/testing-suite": "@stable",
