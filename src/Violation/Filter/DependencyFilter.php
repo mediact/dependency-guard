@@ -45,30 +45,34 @@ class DependencyFilter implements ViolationFilterInterface
      */
     public function __invoke(ViolationInterface $violation): bool
     {
-        $violations = array_map(
-            function (
-                array $dependent
-            ) use ($violation): ViolationInterface {
-                /** @var PackageInterface $package */
-                [$package] = $dependent;
+        return array_reduce(
+            array_map(
+                function (
+                    array $dependent
+                ) use ($violation): ViolationInterface {
+                    /** @var PackageInterface $package */
+                    [$package] = $dependent;
 
-                return new Violation(
-                    sprintf(
-                        'Package "%s" provides violating package "%s".',
-                        $package->getName(),
-                        $violation->getPackage()->getName()
-                    ),
-                    new Candidate(
-                        $package,
-                        $violation->getSymbols()
-                    )
-                );
+                    return new Violation(
+                        sprintf(
+                            'Package "%s" provides violating package "%s".',
+                            $package->getName(),
+                            $violation->getPackage()->getName()
+                        ),
+                        new Candidate(
+                            $package,
+                            $violation->getSymbols()
+                        )
+                    );
+                },
+                $this->repository->getDependents(
+                    $violation->getPackage()->getName()
+                )
+            ),
+            function (bool $carry, ViolationInterface $violation): bool {
+                return $carry || $this->filter->__invoke($violation);
             },
-            $this->repository->getDependents(
-                $violation->getPackage()->getName()
-            )
+            false
         );
-
-        return count(array_filter($violations, $this->filter)) > 0;
     }
 }
