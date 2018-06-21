@@ -8,6 +8,8 @@ namespace Mediact\DependencyGuard\Tests\Violation\Filter;
 
 use Composer\Composer;
 use Composer\Package\RootPackageInterface;
+use Composer\Repository\RepositoryManager;
+use Composer\Repository\WritableRepositoryInterface;
 use Mediact\DependencyGuard\Violation\Filter\ViolationFilterInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -57,6 +59,20 @@ class ViolationFilterFactoryTest extends TestCase
             ->expects(self::any())
             ->method('getPackage')
             ->willReturn($package);
+
+        $manager = $this->createMock(RepositoryManager::class);
+
+        $composer
+            ->expects(self::any())
+            ->method('getRepositoryManager')
+            ->willReturn($manager);
+
+        $manager
+            ->expects(self::any())
+            ->method('getLocalRepository')
+            ->willReturn(
+                $this->createMock(WritableRepositoryInterface::class)
+            );
 
         return $composer;
     }

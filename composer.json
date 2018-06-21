@@ -26,7 +26,8 @@
     },
     "require-dev": {
         "mediact/testing-suite": "@stable",
-        "phpro/grumphp": "~0.1"
+        "phpro/grumphp": "~0.1",
+        "kint-php/kint": "@stable"
     },
     "suggest": {
         "phpro/grumphp": "To run DependencyGuard as GrumPHP Task."

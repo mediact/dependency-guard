@@ -19,10 +19,20 @@ class ViolationFilterFactory implements ViolationFilterFactoryInterface
      */
     public function create(Composer $composer): ViolationFilterInterface
     {
-        return new ViolationFilterChain(
+        $chain = new ViolationFilterChain(
             ...array_merge(
                 $this->getSuggestsFilters($composer),
                 $this->getIgnoreFilters($composer)
+            )
+        );
+
+        return new ViolationFilterChain(
+            $chain,
+            new DependencyFilter(
+                $composer
+                    ->getRepositoryManager()
+                    ->getLocalRepository(),
+                $chain
             )
         );
     }
