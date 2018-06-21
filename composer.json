@@ -46,7 +46,7 @@
     ],
     "extra": {
         "grumphp": {
-            "config-default-path": "vendor/mediact/testing-suite/config/default/grumphp.yml"
+            "config-default-path": "grumphp.dist.yml"
         },
         "class": "Mediact\\DependencyGuard\\Composer\\Plugin"
     },
