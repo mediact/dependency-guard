@@ -26,6 +26,7 @@
     },
     "require-dev": {
         "mediact/testing-suite": "@stable",
+        "mikey179/vfsstream": "^1.6",
         "phpro/grumphp": "~0.1",
         "kint-php/kint": "@stable"
     },
