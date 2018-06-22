@@ -16,7 +16,7 @@ class ViolationFilterChain implements ViolationFilterInterface
     /**
      * Constructor.
      *
-     * @param ViolationFilterInterface[] ...$filters
+     * @param ViolationFilterInterface ...$filters
      */
     public function __construct(ViolationFilterInterface ...$filters)
     {

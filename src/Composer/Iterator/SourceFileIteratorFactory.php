@@ -74,7 +74,7 @@ class SourceFileIteratorFactory implements FileIteratorFactoryInterface
     /**
      * Create an iterator for the given file paths.
      *
-     * @param string[] ...$paths
+     * @param string ...$paths
      *
      * @return Iterator
      */
@@ -155,14 +155,14 @@ class SourceFileIteratorFactory implements FileIteratorFactoryInterface
                 Iterator $iterator,
                 string ...$excludePatterns
             ) {
-                parent::__construct($iterator);
-
                 if (!empty($excludePatterns)) {
                     $this->excludePattern = sprintf(
                         '@^(%s)$@',
                         implode('|', $excludePatterns)
                     );
                 }
+
+                parent::__construct($iterator);
             }
 
             /**

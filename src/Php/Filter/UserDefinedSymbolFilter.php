@@ -20,10 +20,6 @@ class UserDefinedSymbolFilter implements SymbolFilterInterface
      */
     public function __invoke(string $symbol): bool
     {
-        if (!class_exists($symbol)) {
-            return false;
-        }
-
         try {
             $reflection = new ReflectionClass($symbol);
         } catch (Throwable $e) {

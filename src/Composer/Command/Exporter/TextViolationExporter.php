@@ -16,14 +16,21 @@ class TextViolationExporter implements ViolationExporterInterface
     /** @var SymfonyStyle */
     private $prompt;
 
+    /** @var string */
+    private $workingDirectory;
+
     /**
      * Constructor.
      *
      * @param SymfonyStyle $prompt
+     * @param string|null  $workingDirectory
      */
-    public function __construct(SymfonyStyle $prompt)
-    {
-        $this->prompt = $prompt;
+    public function __construct(
+        SymfonyStyle $prompt,
+        string $workingDirectory = null
+    ) {
+        $this->prompt           = $prompt;
+        $this->workingDirectory = $workingDirectory ?? getcwd();
     }
 
     /**
@@ -35,7 +42,7 @@ class TextViolationExporter implements ViolationExporterInterface
      */
     public function export(ViolationIteratorInterface $violations): void
     {
-        $root = getcwd() . DIRECTORY_SEPARATOR;
+        $root = $this->workingDirectory . DIRECTORY_SEPARATOR;
 
         foreach ($violations as $violation) {
             $this->prompt->error($violation->getMessage());

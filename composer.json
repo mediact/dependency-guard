@@ -22,11 +22,13 @@
         "php": "^7.2",
         "composer/composer": "^1.6",
         "composer-plugin-api": "^1.1",
-        "nikic/php-parser": "^3.0"
+        "nikic/php-parser": "^3.0 | ^4.0"
     },
     "require-dev": {
         "mediact/testing-suite": "@stable",
-        "phpro/grumphp": "~0.1"
+        "mikey179/vfsstream": "^1.6",
+        "phpro/grumphp": "~0.1",
+        "kint-php/kint": "@stable"
     },
     "suggest": {
         "phpro/grumphp": "To run DependencyGuard as GrumPHP Task."
@@ -46,7 +48,7 @@
     ],
     "extra": {
         "grumphp": {
-            "config-default-path": "vendor/mediact/testing-suite/config/default/grumphp.yml"
+            "config-default-path": "grumphp.dist.yml"
         },
         "class": "Mediact\\DependencyGuard\\Composer\\Plugin"
     },

@@ -50,9 +50,9 @@ class ViolationExporterFactory implements ViolationExporterFactoryInterface
     /**
      * Get a list of output formats.
      *
-     * @return iterable|string[]
+     * @return string[]
      */
-    public function getOutputFormats(): iterable
+    public function getOutputFormats(): array
     {
         return array_keys(static::EXPORTERS);
     }

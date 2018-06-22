@@ -28,21 +28,27 @@ class DependencyGuard implements TaskInterface
     /** @var ViolationExporterInterface */
     private $exporter;
 
+    /** @var null|string */
+    private $workingDirectory;
+
     /**
      * Constructor.
      *
      * @param Composer                        $composer
      * @param DependencyGuardFactoryInterface $guardFactory
      * @param ViolationExporterInterface      $exporter
+     * @param string|null                     $workingDirectory
      */
     public function __construct(
         Composer $composer,
         DependencyGuardFactoryInterface $guardFactory,
-        ViolationExporterInterface $exporter
+        ViolationExporterInterface $exporter,
+        string $workingDirectory = null
     ) {
-        $this->composer     = $composer;
-        $this->guardFactory = $guardFactory;
-        $this->exporter     = $exporter;
+        $this->composer         = $composer;
+        $this->guardFactory     = $guardFactory;
+        $this->exporter         = $exporter;
+        $this->workingDirectory = $workingDirectory ?? getcwd();
     }
 
 
@@ -87,7 +93,9 @@ class DependencyGuard implements TaskInterface
     public function run(ContextInterface $context): TaskResultInterface
     {
         foreach (['composer.lock', 'composer.json'] as $file) {
-            if (!is_readable(getcwd() . DIRECTORY_SEPARATOR . $file)) {
+            if (!is_readable(
+                $this->workingDirectory . DIRECTORY_SEPARATOR . $file
+            )) {
                 return TaskResult::createSkipped($this, $context);
             }
         }

@@ -117,8 +117,8 @@ class ViolationFinder implements ViolationFinderInterface
      * Determine what packages are installed without having its code be used in
      * the given package.
      *
-     * @param Composer             $composer
-     * @param CandidateInterface[] ...$candidates
+     * @param Composer           $composer
+     * @param CandidateInterface ...$candidates
      *
      * @return ViolationInterface[]
      */
