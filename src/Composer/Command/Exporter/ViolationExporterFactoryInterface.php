@@ -30,7 +30,7 @@ interface ViolationExporterFactoryInterface
     /**
      * Get a list of output formats.
      *
-     * @return iterable|string[]
+     * @return string[]
      */
-    public function getOutputFormats(): iterable;
+    public function getOutputFormats(): array;
 }

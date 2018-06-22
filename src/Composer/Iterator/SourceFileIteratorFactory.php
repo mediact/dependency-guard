@@ -155,14 +155,14 @@ class SourceFileIteratorFactory implements FileIteratorFactoryInterface
                 Iterator $iterator,
                 string ...$excludePatterns
             ) {
-                parent::__construct($iterator);
-
                 if (!empty($excludePatterns)) {
                     $this->excludePattern = sprintf(
                         '@^(%s)$@',
                         implode('|', $excludePatterns)
                     );
                 }
+
+                parent::__construct($iterator);
             }
 
             /**
