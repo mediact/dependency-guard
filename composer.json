@@ -1,7 +1,7 @@
 {
-    "name": "mediact/static-production-dependency-prototype",
-    "description": "A prototype package to test static production dependency analysis tooling.",
-    "type": "library",
+    "name": "mediact/dependency-guard",
+    "description": "Static production dependency analysis.",
+    "type": "composer-plugin",
     "license": "proprietary",
     "authors": [
         {
@@ -20,16 +20,37 @@
     "minimum-stability": "stable",
     "require": {
         "php": "^7.2",
-        "symfony/symfony": "^4.0",
-        "nikic/php-parser": "^3.0"
+        "composer/composer": "^1.6",
+        "composer-plugin-api": "^1.1",
+        "nikic/php-parser": "^3.0 | ^4.0"
     },
     "require-dev": {
-        "mediact/testing-suite": "@stable"
+        "mediact/testing-suite": "@stable",
+        "mikey179/vfsstream": "^1.6",
+        "phpro/grumphp": "~0.1",
+        "kint-php/kint": "@stable"
     },
+    "suggest": {
+        "phpro/grumphp": "To run DependencyGuard as GrumPHP Task."
+    },
+    "autoload": {
+        "psr-4": {
+            "Mediact\\DependencyGuard\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mediact\\DependencyGuard\\Tests\\": "tests"
+        }
+    },
+    "bin": [
+        "bin/dependency-guard"
+    ],
     "extra": {
         "grumphp": {
-            "config-default-path": "vendor/mediact/testing-suite/config/default/grumphp.yml"
-        }
+            "config-default-path": "grumphp.dist.yml"
+        },
+        "class": "Mediact\\DependencyGuard\\Composer\\Plugin"
     },
     "archive": {
         "exclude": [
@@ -38,7 +59,8 @@
             "/phpmd.xml",
             "/phpstan.neon",
             "/phpcs.xml",
-            "/bitbucket-pipelines.yml"
+            "/bitbucket-pipelines.yml",
+            "/tests"
         ]
     },
     "config": {
