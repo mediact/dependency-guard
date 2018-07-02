@@ -18,7 +18,7 @@ class ViolationIteratorTest extends TestCase
     /**
      * @dataProvider violationProvider
      *
-     * @param ViolationInterface[] ...$violations
+     * @param ViolationInterface ...$violations
      *
      * @return void
      *
@@ -45,14 +45,13 @@ class ViolationIteratorTest extends TestCase
      */
     public function violationProvider(): array
     {
+        /** @var ViolationInterface $violation */
+        $violation = $this->createMock(ViolationInterface::class);
+
         return [
             [],
-            [$this->createMock(ViolationInterface::class)],
-            [
-                $this->createMock(ViolationInterface::class),
-                $this->createMock(ViolationInterface::class),
-                $this->createMock(ViolationInterface::class)
-            ]
+            [$violation],
+            [$violation, $violation, $violation]
         ];
     }
 }

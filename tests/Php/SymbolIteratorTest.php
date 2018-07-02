@@ -36,14 +36,13 @@ class SymbolIteratorTest extends TestCase
      */
     public function symbolProvider(): array
     {
+        /** @var SymbolInterface $symbol */
+        $symbol = $this->createMock(SymbolInterface::class);
+
         return [
             [],
-            [$this->createMock(SymbolInterface::class)],
-            [
-                $this->createMock(SymbolInterface::class),
-                $this->createMock(SymbolInterface::class),
-                $this->createMock(SymbolInterface::class)
-            ]
+            [$symbol],
+            [$symbol, $symbol, $symbol]
         ];
     }
 }

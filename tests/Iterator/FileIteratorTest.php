@@ -46,14 +46,13 @@ class FileIteratorTest extends TestCase
      */
     public function fileProvider(): array
     {
+        /** @var SplFileInfo $file */
+        $file = $this->createMock(SplFileInfo::class);
+
         return [
             [],
-            [$this->createMock(SplFileInfo::class)],
-            [
-                $this->createMock(SplFileInfo::class),
-                $this->createMock(SplFileInfo::class),
-                $this->createMock(SplFileInfo::class)
-            ]
+            [$file],
+            [$file, $file, $file]
         ];
     }
 }
