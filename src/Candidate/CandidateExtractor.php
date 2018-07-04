@@ -50,23 +50,9 @@ class CandidateExtractor implements CandidateExtractorInterface
         $installed  = $repository->getPackages();
 
         foreach ($packages as $name => $symbols) {
-            $package = array_reduce(
-                $installed,
-                function (
-                    ?PackageInterface $carry,
-                    PackageInterface $package
-                ) use (
-                    $name
-                ): ?PackageInterface {
-                    return $carry ?? (
-                        $package->getName() === $name
-                            ? $package
-                            : null
-                        );
-                }
-            );
+            $package = $this->getPackageByName($installed, $name);
 
-            if (!$package instanceof PackageInterface) {
+            if ($package === null) {
                 continue;
             }
 
@@ -77,6 +63,22 @@ class CandidateExtractor implements CandidateExtractorInterface
         }
 
         return $candidates;
+    }
+
+    /**
+     * @param PackageInterface[]|iterable $packages
+     * @param string $name
+     * @return PackageInterface|null
+     */
+    private function getPackageByName(iterable $packages, string $name): ?PackageInterface
+    {
+        foreach ($packages as $package) {
+            if ($package->getName() === $name) {
+                return $package;
+            }
+        }
+
+        return null;
     }
 
     /**
