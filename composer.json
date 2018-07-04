@@ -2,7 +2,7 @@
     "name": "mediact/dependency-guard",
     "description": "Static production dependency analysis.",
     "type": "composer-plugin",
-    "license": "proprietary",
+    "license": "MIT",
     "authors": [
         {
             "name": "MediaCT",
