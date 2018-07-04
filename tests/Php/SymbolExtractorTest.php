@@ -45,7 +45,6 @@ class SymbolExtractorTest extends TestCase
 
     /**
      * @dataProvider emptyProvider
-     * @dataProvider illegalFilesProvider
      * @dataProvider emptyFilesProvider
      * @dataProvider filledFilesProvider
      *
@@ -156,43 +155,15 @@ class SymbolExtractorTest extends TestCase
             ->method('isReadable')
             ->willReturn($content !== null);
 
+        $tempFile = tempnam(sys_get_temp_dir(), "");
+        file_put_contents($tempFile, $content);
+
         $fileInfo
             ->expects(self::any())
-            ->method('openFile')
-            ->with(self::isType('string'))
-            ->willReturnCallback(
-                function (string $mode) use ($content) {
-                    $file = new SplFileObject('php://memory', $mode);
-                    $file->fwrite((string)$content);
-
-                    return $file;
-                }
-            );
+            ->method('__toString')
+            ->willReturn($tempFile);
 
         return $fileInfo;
-    }
-
-    /**
-     * @return Parser[][]|FileIteratorInterface[][]
-     */
-    public function illegalFilesProvider(): array
-    {
-        $parser = $this->createMock(Parser::class);
-
-        $parser
-            ->expects(self::never())
-            ->method('parse')
-            ->with(self::anything());
-
-        return [
-            [
-                $parser,
-                $this->createFileIterator(
-                    $this->createDirectory(),
-                    $this->createFile()
-                )
-            ]
-        ];
     }
 
     /**
