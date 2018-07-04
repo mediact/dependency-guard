@@ -1,6 +1,6 @@
 
-[![Packagist](https://img.shields.io/packagist/v/mediact/dependency-guard.svg)](https://packagist.org/packages/mediact/dependency-guard)
-[![PHP from Packagist](https://img.shields.io/packagist/php-v/mediact/dependency-guard.svg)](https://packagist.org/packages/mediact/dependency-guard)
+[![Packagist](https://img.shields.io/packagist/v/mediact/dependency-guard.png)](https://packagist.org/packages/mediact/dependency-guard)
+[![PHP from Packagist](https://img.shields.io/packagist/php-v/mediact/dependency-guard.png)](https://packagist.org/packages/mediact/dependency-guard)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mediact/dependency-guard/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mediact/dependency-guard/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/mediact/dependency-guard/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/mediact/dependency-guard/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/mediact/dependency-guard/badges/build.png?b=master)](https://scrutinizer-ci.com/g/mediact/dependency-guard/build-status/master)
