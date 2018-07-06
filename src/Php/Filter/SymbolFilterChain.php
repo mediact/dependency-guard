@@ -30,8 +30,7 @@ class SymbolFilterChain implements SymbolFilterInterface
      */
     public function __invoke(string $symbol): bool
     {
-        foreach ($this->filters as $filter)
-        {
+        foreach ($this->filters as $filter) {
             if (!$filter->__invoke($symbol)) {
                 return false;
             }

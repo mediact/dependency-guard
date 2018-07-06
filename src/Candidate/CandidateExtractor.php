@@ -46,8 +46,9 @@ class CandidateExtractor implements CandidateExtractorInterface
             $packages[$package][] = $symbol;
         }
 
+        $installed = $repository->getPackages();
+
         $candidates = [];
-        $installed  = $repository->getPackages();
 
         foreach ($packages as $name => $symbols) {
             $package = $this->getPackageByName($installed, $name);
@@ -67,7 +68,8 @@ class CandidateExtractor implements CandidateExtractorInterface
 
     /**
      * @param PackageInterface[]|iterable $packages
-     * @param string $name
+     * @param string                      $name
+     *
      * @return PackageInterface|null
      */
     private function getPackageByName(iterable $packages, string $name): ?PackageInterface

@@ -49,9 +49,9 @@ class SymbolExtractor implements SymbolExtractorInterface
 
         foreach ($files as $file) {
             try {
-                $contents   = @\file_get_contents($file);
+                $contents = $this->readFile($file);
 
-                if ($contents === false) {
+                if ($contents === null) {
                     continue;
                 }
 
@@ -73,5 +73,29 @@ class SymbolExtractor implements SymbolExtractorInterface
         }
 
         return new SymbolIterator(...$symbols);
+    }
+
+    /**
+     * @param \SplFileInfo $file
+     *
+     * @return null|string
+     */
+    private function readFile(\SplFileInfo $file): ?string
+    {
+        $oldErrorReporting = error_reporting();
+
+        error_reporting($oldErrorReporting & ~E_WARNING);
+
+        try {
+            $contents = \file_get_contents($file);
+
+            if ($contents === false) {
+                return null;
+            }
+
+            return $contents;
+        } finally {
+            error_reporting($oldErrorReporting);
+        }
     }
 }
