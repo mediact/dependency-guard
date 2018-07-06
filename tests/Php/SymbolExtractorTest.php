@@ -120,22 +120,6 @@ class SymbolExtractorTest extends TestCase
     }
 
     /**
-     * @return SplFileInfo
-     */
-    private function createDirectory(): SplFileInfo
-    {
-        /** @var SplFileInfo|MockObject $directory */
-        $directory = $this->createMock(SplFileInfo::class);
-
-        $directory
-            ->expects(self::any())
-            ->method('isFile')
-            ->willReturn(false);
-
-        return $directory;
-    }
-
-    /**
      * @param string|null $content
      *
      * @return SplFileInfo
