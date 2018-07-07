@@ -120,32 +120,39 @@ class SymbolExtractorTest extends TestCase
     }
 
     /**
-     * @param string|null $content
+     * @param string $content
      *
-     * @return SplFileInfo
+     * @return SplFileInfo|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function createFile(string $content = null): SplFileInfo
+    private function createFile(string $content): SplFileInfo
     {
         /** @var SplFileInfo|MockObject $fileInfo */
         $fileInfo = $this->createMock(SplFileInfo::class);
 
         $fileInfo
-            ->expects(self::any())
             ->method('isFile')
             ->willReturn(true);
 
         $fileInfo
-            ->expects(self::any())
             ->method('isReadable')
             ->willReturn($content !== null);
 
-        $tempFile = tempnam(sys_get_temp_dir(), "");
-        file_put_contents($tempFile, $content);
+        $fileInfo
+            ->method("getSize")
+            ->willReturn(\strlen($content));
+
+        $handle = $this->getMockBuilder(\SplFileObject::class)
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([tempnam(sys_get_temp_dir(), "")])
+            ->getMock();
+
+        $handle
+            ->method("fread")
+            ->willReturn($content);
 
         $fileInfo
-            ->expects(self::any())
-            ->method('__toString')
-            ->willReturn($tempFile);
+            ->method('openFile')
+            ->willReturn($handle);
 
         return $fileInfo;
     }

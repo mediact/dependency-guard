@@ -78,24 +78,11 @@ class SymbolExtractor implements SymbolExtractorInterface
     /**
      * @param \SplFileInfo $file
      *
-     * @return null|string
+     * @return string
      */
-    private function readFile(\SplFileInfo $file): ?string
+    private function readFile(\SplFileInfo $file): string
     {
-        $oldErrorReporting = error_reporting();
-
-        error_reporting($oldErrorReporting & ~E_WARNING);
-
-        try {
-            $contents = \file_get_contents($file);
-
-            if ($contents === false) {
-                return null;
-            }
-
-            return $contents;
-        } finally {
-            error_reporting($oldErrorReporting);
-        }
+        $handle   = $file->openFile('rb');
+        return $handle->fread($file->getSize());
     }
 }
