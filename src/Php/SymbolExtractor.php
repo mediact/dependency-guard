@@ -49,7 +49,13 @@ class SymbolExtractor implements SymbolExtractorInterface
 
         foreach ($files as $file) {
             try {
-                $contents = $this->readFile($file);
+
+                $handle   = $file->openFile('rb');
+                $contents = $handle->fread($file->getSize());
+
+                if ($contents === false) {
+                    continue;
+                }
 
                 $statements = $this->parser->parse($contents);
             } catch (Error $e) {
@@ -69,16 +75,5 @@ class SymbolExtractor implements SymbolExtractorInterface
         }
 
         return new SymbolIterator(...$symbols);
-    }
-
-    /**
-     * @param \SplFileInfo $file
-     *
-     * @return string
-     */
-    private function readFile(\SplFileInfo $file): string
-    {
-        $handle = $file->openFile('rb');
-        return $handle->fread($file->getSize());
     }
 }
