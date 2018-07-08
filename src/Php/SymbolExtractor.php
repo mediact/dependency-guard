@@ -51,14 +51,10 @@ class SymbolExtractor implements SymbolExtractorInterface
             try {
                 $contents = $this->readFile($file);
 
-                if ($contents === null) {
-                    continue;
-                }
-
                 $statements = $this->parser->parse($contents);
             } catch (Error $e) {
-                // Either not a PHP file or the broken file should be detected by other
-                // tooling entirely.
+                // Either not a file, file is not readable, not a PHP file or
+                // the broken file should be detected by other tooling entirely.
                 continue;
             }
 
@@ -82,7 +78,7 @@ class SymbolExtractor implements SymbolExtractorInterface
      */
     private function readFile(\SplFileInfo $file): string
     {
-        $handle   = $file->openFile('rb');
+        $handle = $file->openFile('rb');
         return $handle->fread($file->getSize());
     }
 }
