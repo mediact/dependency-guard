@@ -45,7 +45,7 @@ class SymbolExtractorTest extends TestCase
 
     /**
      * @dataProvider emptyProvider
-     * @dataProvider emptyFilesProvider
+     * @dataProvider unparsableFilesProvider
      * @dataProvider filledFilesProvider
      *
      * @param Parser                $parser
@@ -160,7 +160,7 @@ class SymbolExtractorTest extends TestCase
     /**
      * @return Parser[][]|FileIteratorInterface[][]
      */
-    public function emptyFilesProvider(): array
+    public function unparsableFilesProvider(): array
     {
         $parser = $this->createMock(Parser::class);
 
@@ -176,9 +176,9 @@ class SymbolExtractorTest extends TestCase
             [
                 $parser,
                 $this->createFileIterator(
-                    $this->createFile(''),
-                    $this->createFile(''),
-                    $this->createFile('')
+                    $this->createFile('x'),
+                    $this->createFile('y'),
+                    $this->createFile('z')
                 )
             ]
         ];
