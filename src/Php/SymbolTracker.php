@@ -72,16 +72,13 @@ class SymbolTracker extends NodeVisitorAbstract implements
      */
     public function getSymbols(): iterable
     {
-        return array_reduce(
-            array_filter($this->symbols),
-            function (array $carry, array $names) : array {
-                foreach ($names as $name) {
-                    $carry[] = $name;
-                }
-
-                return $carry;
-            },
-            []
+        return new \CallbackFilterIterator(
+            new \RecursiveIteratorIterator(
+                new \RecursiveArrayIterator($this->symbols, \RecursiveArrayIterator::CHILD_ARRAYS_ONLY)
+            ),
+            function ($each): bool {
+                return $each !== false;
+            }
         );
     }
 }

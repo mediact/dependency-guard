@@ -45,8 +45,7 @@ class SymbolExtractorTest extends TestCase
 
     /**
      * @dataProvider emptyProvider
-     * @dataProvider illegalFilesProvider
-     * @dataProvider emptyFilesProvider
+     * @dataProvider unparsableFilesProvider
      * @dataProvider filledFilesProvider
      *
      * @param Parser                $parser
@@ -121,53 +120,39 @@ class SymbolExtractorTest extends TestCase
     }
 
     /**
-     * @return SplFileInfo
-     */
-    private function createDirectory(): SplFileInfo
-    {
-        /** @var SplFileInfo|MockObject $directory */
-        $directory = $this->createMock(SplFileInfo::class);
-
-        $directory
-            ->expects(self::any())
-            ->method('isFile')
-            ->willReturn(false);
-
-        return $directory;
-    }
-
-    /**
-     * @param string|null $content
+     * @param string $content
      *
-     * @return SplFileInfo
+     * @return SplFileInfo|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function createFile(string $content = null): SplFileInfo
+    private function createFile(string $content): SplFileInfo
     {
         /** @var SplFileInfo|MockObject $fileInfo */
         $fileInfo = $this->createMock(SplFileInfo::class);
 
         $fileInfo
-            ->expects(self::any())
             ->method('isFile')
             ->willReturn(true);
 
         $fileInfo
-            ->expects(self::any())
             ->method('isReadable')
             ->willReturn($content !== null);
 
         $fileInfo
-            ->expects(self::any())
-            ->method('openFile')
-            ->with(self::isType('string'))
-            ->willReturnCallback(
-                function (string $mode) use ($content) {
-                    $file = new SplFileObject('php://memory', $mode);
-                    $file->fwrite((string)$content);
+            ->method("getSize")
+            ->willReturn(\strlen($content));
 
-                    return $file;
-                }
-            );
+        $handle = $this->getMockBuilder(\SplFileObject::class)
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([tempnam(sys_get_temp_dir(), "")])
+            ->getMock();
+
+        $handle
+            ->method("fread")
+            ->willReturn($content);
+
+        $fileInfo
+            ->method('openFile')
+            ->willReturn($handle);
 
         return $fileInfo;
     }
@@ -175,30 +160,7 @@ class SymbolExtractorTest extends TestCase
     /**
      * @return Parser[][]|FileIteratorInterface[][]
      */
-    public function illegalFilesProvider(): array
-    {
-        $parser = $this->createMock(Parser::class);
-
-        $parser
-            ->expects(self::never())
-            ->method('parse')
-            ->with(self::anything());
-
-        return [
-            [
-                $parser,
-                $this->createFileIterator(
-                    $this->createDirectory(),
-                    $this->createFile()
-                )
-            ]
-        ];
-    }
-
-    /**
-     * @return Parser[][]|FileIteratorInterface[][]
-     */
-    public function emptyFilesProvider(): array
+    public function unparsableFilesProvider(): array
     {
         $parser = $this->createMock(Parser::class);
 
@@ -214,9 +176,9 @@ class SymbolExtractorTest extends TestCase
             [
                 $parser,
                 $this->createFileIterator(
-                    $this->createFile(''),
-                    $this->createFile(''),
-                    $this->createFile('')
+                    $this->createFile('x'),
+                    $this->createFile('y'),
+                    $this->createFile('z')
                 )
             ]
         ];

@@ -30,17 +30,12 @@ class SymbolFilterChain implements SymbolFilterInterface
      */
     public function __invoke(string $symbol): bool
     {
-        return array_reduce(
-            $this->filters,
-            function (
-                bool $carry,
-                SymbolFilterInterface $filter
-            ) use (
-                $symbol
-            ) : bool {
-                return $carry && $filter($symbol);
-            },
-            true
-        );
+        foreach ($this->filters as $filter) {
+            if (!$filter->__invoke($symbol)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

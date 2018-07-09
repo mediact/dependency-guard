@@ -48,17 +48,18 @@ class SymbolExtractor implements SymbolExtractorInterface
         $symbols = [];
 
         foreach ($files as $file) {
-            if (!$file->isFile() || !$file->isReadable()) {
-                continue;
-            }
-
             try {
-                $handle     = $file->openFile('r');
-                $contents   = implode('', iterator_to_array($handle));
+                $handle   = $file->openFile('rb');
+                $contents = $handle->fread($file->getSize());
+
+                if (!$contents) { // phpstan thinks this can only return string.
+                    continue;
+                }
+
                 $statements = $this->parser->parse($contents);
             } catch (Error $e) {
-                // Either not a PHP file or the broken file should be detected by other
-                // tooling entirely.
+                // Either not a file, file is not readable, not a PHP file or
+                // the broken file should be detected by other tooling entirely.
                 continue;
             }
 
