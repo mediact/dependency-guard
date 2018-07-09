@@ -35,6 +35,7 @@ class CandidateExtractorTest extends TestCase
      *
      * @covers ::extract
      * @covers ::extractPackage
+     * @covers ::getPackageByName
      */
     public function testExtract(
         Composer $composer,
