@@ -45,7 +45,7 @@ class SymbolExtractorTest extends TestCase
 
     /**
      * @dataProvider emptyProvider
-     * @dataProvider unparsableFilesProvider
+     * @dataProvider nonParsingFilesProvider
      * @dataProvider filledFilesProvider
      *
      * @param Parser                $parser
@@ -115,14 +115,20 @@ class SymbolExtractorTest extends TestCase
             ->with(self::anything());
 
         return [
-            [$parser, $this->createFileIterator()]
+            [$parser, $this->createFileIterator()],
+            [
+                $parser,
+                $this->createFileIterator(
+                    $this->createFile('')
+                )
+            ]
         ];
     }
 
     /**
      * @param string $content
      *
-     * @return SplFileInfo|\PHPUnit_Framework_MockObject_MockObject
+     * @return SplFileInfo
      */
     private function createFile(string $content): SplFileInfo
     {
@@ -141,7 +147,7 @@ class SymbolExtractorTest extends TestCase
             ->method("getSize")
             ->willReturn(\strlen($content));
 
-        $handle = $this->getMockBuilder(\SplFileObject::class)
+        $handle = $this->getMockBuilder(SplFileObject::class)
             ->enableOriginalConstructor()
             ->setConstructorArgs([tempnam(sys_get_temp_dir(), "")])
             ->getMock();
@@ -160,7 +166,7 @@ class SymbolExtractorTest extends TestCase
     /**
      * @return Parser[][]|FileIteratorInterface[][]
      */
-    public function unparsableFilesProvider(): array
+    public function nonParsingFilesProvider(): array
     {
         $parser = $this->createMock(Parser::class);
 
