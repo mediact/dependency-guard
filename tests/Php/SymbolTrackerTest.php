@@ -43,7 +43,9 @@ class SymbolTrackerTest extends TestCase
             $subject->enterNode($node);
         }
 
-        $this->assertEquals($expected, $subject->getSymbols());
+        $actual = iterator_to_array($subject->getSymbols());
+
+        $this->assertSame($expected, $actual);
     }
 
     /**

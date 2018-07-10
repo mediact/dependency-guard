@@ -32,17 +32,12 @@ class ViolationFilterChain implements ViolationFilterInterface
      */
     public function __invoke(ViolationInterface $violation): bool
     {
-        return array_reduce(
-            $this->filters,
-            function (
-                bool $carry,
-                ViolationFilterInterface $filter
-            ) use (
-                $violation
-            ) : bool {
-                return $carry && $filter($violation);
-            },
-            true
-        );
+        foreach ($this->filters as $filter) {
+            if (!$filter->__invoke($violation)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
