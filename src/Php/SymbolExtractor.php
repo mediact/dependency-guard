@@ -49,13 +49,27 @@ class SymbolExtractor implements SymbolExtractorInterface
 
         foreach ($files as $file) {
             try {
-                $handle   = $file->openFile('rb');
-                $contents = $handle->fread($file->getSize());
+                $handle = $file->openFile('rb');
+            } catch (\RuntimeException $e) {
+                /*
+                 * File cannot be opened, e.g. not a file, not readable etc.
+                 */
+                continue;
+            }
 
-                if (!$contents) { // phpstan thinks this can only return string.
-                    continue;
-                }
+            $fileSize = $file->getSize();
 
+            if (0 === $fileSize) {
+                continue;
+            }
+
+            $contents = $handle->fread($fileSize);
+
+            if (!$contents) { // phpstan thinks this can only return string.
+                continue;
+            }
+
+            try {
                 $statements = $this->parser->parse($contents);
             } catch (Error $e) {
                 // Either not a file, file is not readable, not a PHP file or
