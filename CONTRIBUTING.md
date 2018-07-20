@@ -28,9 +28,32 @@ reports :mag_right:.
 that you're experiencing, open a new issue and include a link to the original
 issue in the body of your new one.
 
+Please use the following as guidelines to write a bug report:
+
+### Please describe the found bug
+A clear and concise description of what the problem is.
+
+> I'm always frustrated when [...]
+
+### Describe the solution you'd like
+A clear and concise description of what you want to happen.
+
+> I would like the following changes to be made, in order to achieve [...]
+
+### Describe alternatives you've considered
+
+A clear and concise description of any alternative solutions or features you've considered.
+
+> I have considered using **X** with **Y**, yet [...]
+
+### Additional context
+
+Add any other context or screenshots about the feature request here.
+
+![Dependency Guard: JSON format](docs/composer-dependency-guard-json.png)
+
 ## Pull Requests
 
-* Fill in [the required template](PULL_REQUEST_TEMPLATE.md)
 * Do not include issue numbers in the pull request title.
 * Include screenshots and animated GIFs in your pull request whenever possible.
 * Follow the style guides in this document.
@@ -52,6 +75,14 @@ issue in the body of your new one.
 The package
 [`mediact/testing-suite`](https://packagist.org/packages/mediact/testing-suite)
 is installed, ensuring code style and standards, as well as quality.
+
+To locally test using the testing suite, use the following:
+
+```
+vendor/bin/grumphp run
+```
+
+This will run GrumPHP using the tests set by the testing suite.
 
 ### Git Commit Messages
 
