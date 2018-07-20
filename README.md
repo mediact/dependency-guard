@@ -1,10 +1,12 @@
-
+[![Packagist](https://img.shields.io/packagist/dt/mediact/dependency-guard.png)](https://packagist.org/packages/mediact/dependency-guard/stats)
 [![Packagist](https://img.shields.io/packagist/v/mediact/dependency-guard.png)](https://packagist.org/packages/mediact/dependency-guard)
 [![PHP from Packagist](https://img.shields.io/packagist/php-v/mediact/dependency-guard.png)](https://packagist.org/packages/mediact/dependency-guard)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mediact/dependency-guard/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mediact/dependency-guard/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/mediact/dependency-guard/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/mediact/dependency-guard/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/mediact/dependency-guard/badges/build.png?b=master)](https://scrutinizer-ci.com/g/mediact/dependency-guard/build-status/master)
 [![Code Intelligence Status](https://scrutinizer-ci.com/g/mediact/dependency-guard/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
+[![license](https://img.shields.io/github/license/mediact/dependency-guard.png)](LICENSE.md)
+
 
 # Introduction
 
