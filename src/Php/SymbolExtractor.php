@@ -49,10 +49,11 @@ class SymbolExtractor implements SymbolExtractorInterface
 
         foreach ($files as $file) {
             try {
+                $size     = $file->getSize();
                 $handle   = $file->openFile('rb');
-                $contents = $handle->fread($file->getSize());
+                $contents = $size  > 0 ? $handle->fread($size) : '';
 
-                if (!$contents) { // phpstan thinks this can only return string.
+                if (empty($contents)) {
                     continue;
                 }
 
