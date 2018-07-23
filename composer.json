@@ -54,7 +54,12 @@
     },
     "archive": {
         "exclude": [
+            "/CODE_OF_CONDUCT.md",
+            "/CONTRIBUTING.md",
+            "/.github",
+            "/.gitattributes",
             "/.gitignore",
+            "/grumphp.dist.yml",
             "/phpunit.xml",
             "/phpmd.xml",
             "/phpstan.neon",
