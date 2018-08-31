@@ -71,7 +71,7 @@ class SymbolTrackerTest extends TestCase
     }
 
     /**
-     * @return SymbolFilterInterface[][]|Node[][][]|Node[][]
+     * @return array
      */
     public function whitelistedNodesProvider(): array
     {
@@ -100,7 +100,7 @@ class SymbolTrackerTest extends TestCase
     }
 
     /**
-     * @return SymbolFilterInterface[][]|Node[][][]|Node[][]
+     * @return array
      */
     public function blacklistedNodesProvider(): array
     {
