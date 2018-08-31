@@ -6,7 +6,7 @@
 
 namespace Mediact\DependencyGuard\Php\Filter;
 
-use ReflectionClass;
+use Roave\BetterReflection\Reflection\ReflectionClass;
 use Throwable;
 
 class UserDefinedSymbolFilter implements SymbolFilterInterface
@@ -21,7 +21,7 @@ class UserDefinedSymbolFilter implements SymbolFilterInterface
     public function __invoke(string $symbol): bool
     {
         try {
-            $reflection = new ReflectionClass($symbol);
+            $reflection = ReflectionClass::createFromName($symbol);
         } catch (Throwable $e) {
             return false;
         }
