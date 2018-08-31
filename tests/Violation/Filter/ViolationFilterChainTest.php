@@ -42,7 +42,7 @@ class ViolationFilterChainTest extends TestCase
     }
 
     /**
-     * @return ViolationInterface[][]|bool[][]
+     * @return array
      */
     public function emptyProvider(): array
     {
@@ -79,7 +79,7 @@ class ViolationFilterChainTest extends TestCase
     }
 
     /**
-     * @return ViolationInterface[][]|bool[][]|ViolationFilterInterface[][]
+     * @return array
      */
     public function matchingProvider(): array
     {
@@ -116,7 +116,7 @@ class ViolationFilterChainTest extends TestCase
     }
 
     /**
-     * @return ViolationInterface[][]|bool[][]|ViolationFilterInterface[][]
+     * @return array
      */
     public function nonMatchingProvider(): array
     {

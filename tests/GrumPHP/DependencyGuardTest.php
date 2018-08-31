@@ -99,7 +99,7 @@ class DependencyGuardTest extends TestCase
     }
 
     /**
-     * @return ContextInterface[][]|bool[][]
+     * @return array
      */
     public function contextProvider(): array
     {
@@ -223,7 +223,7 @@ class DependencyGuardTest extends TestCase
     }
 
     /**
-     * @return DependencyGuardInterface[][]|bool[][]
+     * @return array
      */
     public function guardProvider(): array
     {
