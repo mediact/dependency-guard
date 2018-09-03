@@ -91,7 +91,6 @@ class DependencyGuardCommandTest extends TestCase
      * @return void
      *
      * @covers ::execute
-     * @covers ::registerAutoloader
      */
     public function testExecute(
         ViolationIteratorInterface $violations,
