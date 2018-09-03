@@ -26,6 +26,7 @@
         "roave/better-reflection": "^3.1"
     },
     "require-dev": {
+        "symfony/process": "@stable",
         "mediact/testing-suite": "@stable",
         "mikey179/vfsstream": "^1.6",
         "phpro/grumphp": "~0.1",

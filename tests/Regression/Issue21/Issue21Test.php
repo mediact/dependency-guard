@@ -2,8 +2,13 @@
 
 namespace Mediact\DependencyGuard\Tests\Regression\Issue21;
 
+use Composer\Util\Filesystem;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Process\Process;
 
+/**
+ * @see https://github.com/mediact/dependency-guard/issues/21
+ */
 class Issue21Test extends TestCase
 {
     /**
@@ -11,22 +16,40 @@ class Issue21Test extends TestCase
      */
     public function setUp(): void
     {
-        exec("composer install --quiet --working-dir=".escapeshellarg(__DIR__), $output, $return);
-        if ($return !== 0) {
-            self::markTestSkipped(implode(PHP_EOL, $output));
+        $process = new Process(
+            [
+                trim(`which composer` ?? `which composer.phar`),
+                'install',
+                '--quiet',
+                '--working-dir',
+                __DIR__
+            ]
+        );
+
+        if ($process->run() !== 0) {
+            self::markTestSkipped(
+                $process->getErrorOutput()
+            );
         }
     }
 
     /**
-     * @coversNothing
      * @return void
+     * @coversNothing
      */
     public function testNoFatalsBecauseOfConflicts(): void
     {
-        self::assertNotContains(
-            'Fatal error:',
-            shell_exec('cd '.escapeshellarg(__DIR__).' && php ../../../bin/dependency-guard').''
+        $process = new Process(
+            [
+                PHP_BINARY,
+                '../../../bin/dependency-guard'
+            ],
+            __DIR__
         );
+
+        $process->run();
+
+        self::assertNotContains('Fatal error:', $process->getErrorOutput());
     }
 
     /**
@@ -34,22 +57,9 @@ class Issue21Test extends TestCase
      */
     public function tearDown(): void
     {
-       $this->delete(__DIR__.DIRECTORY_SEPARATOR.'vendor');
-    }
-
-    /**
-     * @param string $dir
-     */
-    private function delete(string $dir): void
-    {
-        foreach (array_diff(scandir($dir), ['.', '..']) as $file) {
-            $file = $dir.DIRECTORY_SEPARATOR.$file;
-            if (is_file($file)) {
-                unlink($file);
-            } elseif (is_dir($file)) {
-                $this->delete($file);
-            }
-        }
-        rmdir($dir);
+        $filesystem = new Filesystem();
+        $filesystem->removeDirectory(
+            __DIR__ . DIRECTORY_SEPARATOR . 'vendor'
+        );
     }
 }
