@@ -1,0 +1,6 @@
+{
+    "name": "issue21/test",
+    "require": {
+        "symfony/console": "2.8.45"
+    }
+}
