@@ -7,7 +7,6 @@
 namespace Mediact\DependencyGuard\Composer\Command;
 
 use Composer\Command\BaseCommand;
-use Composer\Composer;
 use Mediact\DependencyGuard\Composer\Command\Exporter\ViolationExporterFactory;
 use Mediact\DependencyGuard\Composer\Command\Exporter\ViolationExporterFactoryInterface;
 use Mediact\DependencyGuard\DependencyGuardFactory;
@@ -85,37 +84,15 @@ class DependencyGuardCommand extends BaseCommand
         InputInterface $input,
         OutputInterface $output
     ): int {
-        $composer = $this->getComposer(true);
-        $guard    = $this->guardFactory->create();
-
-        $this->registerAutoloader($composer);
+        $composer   = $this->getComposer(true);
+        $guard      = $this->guardFactory->create();
         $violations = $guard->determineViolations($composer);
+        $exporter   = $this->exporterFactory->create($input, $output);
 
-        $exporter = $this->exporterFactory->create($input, $output);
         $exporter->export($violations);
 
         return count($violations) > 0
             ? static::EXIT_VIOLATIONS
             : static::EXIT_NO_VIOLATIONS;
-    }
-
-    /**
-     * Register the autoloader for the current project, so subject classes can
-     * be automatically loaded.
-     *
-     * @param Composer $composer
-     *
-     * @return void
-     */
-    private function registerAutoloader(Composer $composer): void
-    {
-        $config     = $composer->getConfig();
-        $vendor     = $config->get('vendor-dir', 0);
-        $autoloader = $vendor . DIRECTORY_SEPARATOR . 'autoload.php';
-
-        if (is_readable($autoloader)) {
-            /** @noinspection PhpIncludeInspection */
-            require_once $autoloader;
-        }
     }
 }

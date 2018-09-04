@@ -76,7 +76,7 @@ class SymbolTest extends TestCase
     }
 
     /**
-     * @return Name[][]|string[][]
+     * @return array
      */
     public function nameProvider(): array
     {
@@ -126,7 +126,7 @@ class SymbolTest extends TestCase
     }
 
     /**
-     * @return Name[][]|string[][]
+     * @return array
      */
     public function lineProvider(): array
     {

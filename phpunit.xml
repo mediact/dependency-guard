@@ -5,6 +5,9 @@
         <testsuite name="default">
             <directory>tests</directory>
         </testsuite>
+        <testsuite name="regression">
+            <directory>tests/Regression</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
