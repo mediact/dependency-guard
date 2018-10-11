@@ -1,0 +1,11 @@
+{
+    "name": "issue25/test",
+    "require": {
+        "php-twinfield/twinfield": "dev-master#04c1b248efc9268db2ad173a9305fa9c21970df8"
+    },
+    "autoload": {
+        "psr-4": {
+            "PhpTwinfield\\": "vendor/php-twinfield/twinfield/src"
+        }
+    }
+}
