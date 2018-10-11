@@ -48,6 +48,8 @@ class SymbolExtractor implements SymbolExtractorInterface
         $symbols = [];
 
         foreach ($files as $file) {
+            $parser = clone $this->parser;
+
             try {
                 $size     = $file->getSize();
                 $handle   = $file->openFile('rb');
@@ -57,7 +59,7 @@ class SymbolExtractor implements SymbolExtractorInterface
                     continue;
                 }
 
-                $statements = $this->parser->parse($contents);
+                $statements = $parser->parse($contents);
             } catch (Error $e) {
                 // Either not a file, file is not readable, not a PHP file or
                 // the broken file should be detected by other tooling entirely.

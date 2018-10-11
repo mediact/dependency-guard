@@ -11,10 +11,12 @@ use Composer\Package\PackageInterface;
 use Mediact\DependencyGuard\Php\SymbolInterface;
 use Mediact\DependencyGuard\Php\SymbolIterator;
 use Mediact\DependencyGuard\Php\SymbolIteratorInterface;
-use Roave\BetterReflection\Reflection\ReflectionClass;
+use Mediact\DependencyGuard\Reflection\ReflectionTrait;
 
 class CandidateExtractor implements CandidateExtractorInterface
 {
+    use ReflectionTrait;
+
     /**
      * Extract violation candidates from the given Composer instance and symbols.
      *
@@ -100,7 +102,7 @@ class CandidateExtractor implements CandidateExtractorInterface
         $name = $symbol->getName();
 
         if (!array_key_exists($name, $packagesPerSymbol)) {
-            $reflection = ReflectionClass::createFromName($name);
+            $reflection = $this->getClassReflection($name);
             $file       = $reflection->getFileName();
 
             // This happens for symbols in the current package.
