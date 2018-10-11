@@ -22,9 +22,11 @@
         "php": "^7.1",
         "composer/composer": "^1.6",
         "composer-plugin-api": "^1.1",
-        "nikic/php-parser": "^3.0 | ^4.0"
+        "nikic/php-parser": "^3.0 | ^4.0",
+        "roave/better-reflection": "^3.1"
     },
     "require-dev": {
+        "symfony/process": "@stable",
         "mediact/testing-suite": "@stable",
         "mikey179/vfsstream": "^1.6",
         "phpro/grumphp": "~0.1",

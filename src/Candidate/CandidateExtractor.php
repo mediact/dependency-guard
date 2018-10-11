@@ -11,7 +11,7 @@ use Composer\Package\PackageInterface;
 use Mediact\DependencyGuard\Php\SymbolInterface;
 use Mediact\DependencyGuard\Php\SymbolIterator;
 use Mediact\DependencyGuard\Php\SymbolIteratorInterface;
-use ReflectionClass;
+use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class CandidateExtractor implements CandidateExtractorInterface
 {
@@ -100,7 +100,7 @@ class CandidateExtractor implements CandidateExtractorInterface
         $name = $symbol->getName();
 
         if (!array_key_exists($name, $packagesPerSymbol)) {
-            $reflection = new ReflectionClass($name);
+            $reflection = ReflectionClass::createFromName($name);
             $file       = $reflection->getFileName();
 
             // This happens for symbols in the current package.

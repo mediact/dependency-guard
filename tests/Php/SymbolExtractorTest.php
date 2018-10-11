@@ -103,7 +103,7 @@ class SymbolExtractorTest extends TestCase
     }
 
     /**
-     * @return Parser[][]|FileIteratorInterface[][]
+     * @return array
      */
     public function emptyProvider(): array
     {
@@ -164,7 +164,7 @@ class SymbolExtractorTest extends TestCase
     }
 
     /**
-     * @return Parser[][]|FileIteratorInterface[][]
+     * @return array
      */
     public function nonParsingFilesProvider(): array
     {
@@ -191,7 +191,7 @@ class SymbolExtractorTest extends TestCase
     }
 
     /**
-     * @return Parser[][]|FileIteratorInterface[][]
+     * @return array
      */
     public function filledFilesProvider(): array
     {

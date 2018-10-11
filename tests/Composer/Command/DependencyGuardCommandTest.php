@@ -8,6 +8,7 @@ namespace Mediact\DependencyGuard\Tests\Composer\Command;
 
 use Composer\Composer;
 use Composer\Config;
+use Composer\EventDispatcher\EventDispatcher;
 use Mediact\DependencyGuard\Composer\Command\Exporter\ViolationExporterFactoryInterface;
 use Mediact\DependencyGuard\DependencyGuardFactoryInterface;
 use Mediact\DependencyGuard\DependencyGuardInterface;
@@ -22,6 +23,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @coversDefaultClass \Mediact\DependencyGuard\Composer\Command\DependencyGuardCommand
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class DependencyGuardCommandTest extends TestCase
 {
@@ -64,6 +66,13 @@ class DependencyGuardCommandTest extends TestCase
             ->method('getConfig')
             ->willReturn($config);
 
+        $composer
+            ->expects(self::any())
+            ->method('getEventDispatcher')
+            ->willReturn(
+                $this->createMock(EventDispatcher::class)
+            );
+
         $config
             ->expects(self::any())
             ->method('get')
@@ -82,7 +91,6 @@ class DependencyGuardCommandTest extends TestCase
      * @return void
      *
      * @covers ::execute
-     * @covers ::registerAutoloader
      */
     public function testExecute(
         ViolationIteratorInterface $violations,
