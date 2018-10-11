@@ -27,7 +27,7 @@ class Issue25Test extends TestCase
             [
                 PHP_BINARY,
                 '-d',
-                'memory_limit=15M',
+                'memory_limit=25M',
                 '../../../bin/dependency-guard'
             ],
             __DIR__
