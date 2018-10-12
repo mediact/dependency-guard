@@ -6,11 +6,13 @@
 
 namespace Mediact\DependencyGuard\Php\Filter;
 
-use Roave\BetterReflection\Reflection\ReflectionClass;
+use Mediact\DependencyGuard\Reflection\ReflectionTrait;
 use Throwable;
 
 class UserDefinedSymbolFilter implements SymbolFilterInterface
 {
+    use ReflectionTrait;
+
     /**
      * Filter the given symbol.
      *
@@ -21,7 +23,7 @@ class UserDefinedSymbolFilter implements SymbolFilterInterface
     public function __invoke(string $symbol): bool
     {
         try {
-            $reflection = ReflectionClass::createFromName($symbol);
+            $reflection = $this->getClassReflection($symbol);
         } catch (Throwable $e) {
             return false;
         }
