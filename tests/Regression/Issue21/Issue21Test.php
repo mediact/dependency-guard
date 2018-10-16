@@ -2,7 +2,7 @@
 
 namespace Mediact\DependencyGuard\Tests\Regression\Issue21;
 
-use Composer\Util\Filesystem;
+use Mediact\DependencyGuard\Tests\Regression\ComposerTestEnvironmentTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 
@@ -11,27 +11,7 @@ use Symfony\Component\Process\Process;
  */
 class Issue21Test extends TestCase
 {
-    /**
-     * @return void
-     */
-    public function setUp(): void
-    {
-        $process = new Process(
-            [
-                trim(`which composer` ?? `which composer.phar`),
-                'install',
-                '--quiet',
-                '--working-dir',
-                __DIR__
-            ]
-        );
-
-        if ($process->run() !== 0) {
-            self::markTestSkipped(
-                $process->getErrorOutput()
-            );
-        }
-    }
+    use ComposerTestEnvironmentTrait;
 
     /**
      * @return void
@@ -50,16 +30,5 @@ class Issue21Test extends TestCase
         $process->run();
 
         self::assertNotContains('Fatal error:', $process->getErrorOutput());
-    }
-
-    /**
-     * @return void
-     */
-    public function tearDown(): void
-    {
-        $filesystem = new Filesystem();
-        $filesystem->removeDirectory(
-            __DIR__ . DIRECTORY_SEPARATOR . 'vendor'
-        );
     }
 }
