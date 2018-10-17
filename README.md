@@ -204,7 +204,7 @@ The code above causes DependencyGuard, to detect that
 `\PHPUnit\Framework\AssertionFailedError` is a symbol that can only be available when
 a development installation is used. It may be expected that, since this symbol is only
 used within a `catch`, it is not "really" a dependency, as it will only be autoloaded
-when that specific `catch` is reached. DependencyGuard does no such specific inspection
+when that specific exception is thrown. DependencyGuard does no such specific inspection
 of the symbol at hand. The exception is thus marked as dependency violation.
 
 There are currently no plans to solve this. That being said, pull requests and open
