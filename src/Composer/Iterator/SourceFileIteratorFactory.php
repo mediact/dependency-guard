@@ -156,6 +156,9 @@ class SourceFileIteratorFactory implements FileIteratorFactoryInterface
                 string ...$excludePatterns
             ) {
                 if (!empty($excludePatterns)) {
+                    array_walk($excludePatterns, function(string &$item) {
+                        $item = preg_quote(str_replace('\\', '/', $item), '@');
+                    });
                     $this->excludePattern = sprintf(
                         '@^(%s)$@',
                         implode('|', $excludePatterns)
@@ -181,7 +184,7 @@ class SourceFileIteratorFactory implements FileIteratorFactoryInterface
                         $this->excludePattern === null
                         ?: !preg_match(
                             $this->excludePattern,
-                            $file->getRealPath()
+                            str_replace('\\', '/', $file->getRealPath())
                         )
                     )
                 );
