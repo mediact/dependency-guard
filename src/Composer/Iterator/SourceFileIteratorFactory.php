@@ -164,6 +164,7 @@ class SourceFileIteratorFactory implements FileIteratorFactoryInterface
 
             /**
              * @param string ...$excludePatterns
+             *
              * @return string
              */
             private function preparePattern(string ...$excludePatterns): string
@@ -172,7 +173,7 @@ class SourceFileIteratorFactory implements FileIteratorFactoryInterface
                     '@^(%s)$@',
                     implode(
                         '|',
-                         array_map(
+                        array_map(
                             function (string $pattern): string {
                                 return preg_quote(
                                     str_replace('\\', '/', $pattern),
