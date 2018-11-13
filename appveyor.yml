@@ -16,7 +16,6 @@ environment:
       php_ver_target: 7.2
 
 cache:
-  - '%LOCALAPPDATA%\Composer\files -> composer.lock'
   - composer.phar
   - C:\ProgramData\chocolatey\bin -> .appveyor.yml
   - C:\ProgramData\chocolatey\lib -> .appveyor.yml
@@ -35,7 +34,8 @@ install:
   - IF %PHP%==1 echo @php %%~dp0composer.phar %%* > composer.bat
   - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
   - cd c:\projects\php-project-workspace
-  - appveyor-retry composer install --no-progress --profile
+  - del /f composer.lock
+  - appveyor-retry composer update --no-progress --profile
   - composer show
 
 test_script:
