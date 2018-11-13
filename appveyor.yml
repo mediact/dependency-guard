@@ -15,7 +15,14 @@ environment:
     - dependencies: current
       php_ver_target: 7.2
     - dependencies: highest
-      php_ver_target: 7.3
+      php_ver_target: 7.2
+
+cache:
+  - '%LOCALAPPDATA%\Composer\files -> composer.lock'
+  - composer.phar
+  - C:\ProgramData\chocolatey\bin -> .appveyor.yml
+  - C:\ProgramData\chocolatey\lib -> .appveyor.yml
+  - c:\tools\php -> .appveyor.yml
 
 install:
   - IF EXIST c:\tools\php (SET PHP=0)
