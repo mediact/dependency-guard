@@ -156,19 +156,33 @@ class SourceFileIteratorFactory implements FileIteratorFactoryInterface
                 string ...$excludePatterns
             ) {
                 if (!empty($excludePatterns)) {
-                    array_walk(
-                        $excludePatterns,
-                        function (string &$item) {
-                            $item = preg_quote(str_replace('\\', '/', $item), '@');
-                        }
-                    );
-                    $this->excludePattern = sprintf(
-                        '@^(%s)$@',
-                        implode('|', $excludePatterns)
-                    );
+                    $this->excludePattern = $this->preparePattern(...$excludePatterns);
                 }
 
                 parent::__construct($iterator);
+            }
+
+            /**
+             * @param string ...$excludePatterns
+             * @return string
+             */
+            private function preparePattern(string ...$excludePatterns): string
+            {
+                return sprintf(
+                    '@^(%s)$@',
+                    implode(
+                        '|',
+                         array_map(
+                            function (string $pattern): string {
+                                return preg_quote(
+                                    str_replace('\\', '/', $pattern),
+                                    '@'
+                                );
+                            },
+                            $excludePatterns
+                        )
+                    )
+                );
             }
 
             /**
