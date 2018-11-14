@@ -23,7 +23,7 @@
         "composer/composer": "^1.6",
         "composer-plugin-api": "^1.1",
         "nikic/php-parser": "^3.0 | ^4.0",
-        "roave/better-reflection": "^3.1"
+        "roave/better-reflection": "^2.0 | ^3.1"
     },
     "require-dev": {
         "symfony/process": "@stable",
