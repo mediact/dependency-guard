@@ -22,6 +22,9 @@ class DependencyFilter implements ViolationFilterInterface
     /** @var CompositeRepository */
     private $repository;
 
+    /** @var array */
+    private $dependencies;
+
     /**
      * Constructor.
      *
@@ -52,7 +55,6 @@ class DependencyFilter implements ViolationFilterInterface
                 ) use ($violation): ViolationInterface {
                     /** @var PackageInterface $package */
                     [$package] = $dependent;
-
                     return new Violation(
                         sprintf(
                             'Package "%s" provides violating package "%s".',
@@ -65,14 +67,40 @@ class DependencyFilter implements ViolationFilterInterface
                         )
                     );
                 },
-                $this->repository->getDependents(
-                    $violation->getPackage()->getName()
-                )
+                $this->getDependencies($violation->getPackage()->getName())
             ),
             function (bool $carry, ViolationInterface $violation): bool {
                 return $carry || $this->filter->__invoke($violation);
             },
             false
         );
+    }
+
+    /**
+     * Retrieves the dependencies of a package in a recursive way.
+     *
+     * @param string $packageName
+     *
+     * @return array
+     */
+    private function getDependencies(string $packageName): array
+    {
+        if (!isset($this->dependencies[$packageName])) {
+            $this->dependencies[$packageName] = $this->repository->getDependents(
+                $packageName,
+                null,
+                false,
+                false
+            );
+
+            foreach ($this->dependencies[$packageName] as $key => $dependent) {
+                $this->dependencies[$packageName] = array_merge(
+                    $this->dependencies[$packageName],
+                    $this->getDependencies($key)
+                );
+            }
+        }
+
+        return $this->dependencies[$packageName];
     }
 }

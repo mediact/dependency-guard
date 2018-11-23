@@ -33,7 +33,7 @@ class Issue33Test extends TestCase
 
         $process->setTimeout(5);
 
-        $this->assertEquals(0, $process->run());
+        $process->run();
 
         $this->assertNotContains(
             'Seg',
