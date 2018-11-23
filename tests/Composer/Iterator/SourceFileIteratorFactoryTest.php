@@ -30,12 +30,6 @@ class SourceFileIteratorFactoryTest extends TestCase
      * @param Composer $composer
      *
      * @return void
-     *
-     * @covers ::create
-     * @covers ::createFilesIterator
-     * @covers ::createNamespaceIterator
-     * @covers ::createClassmapIterator
-     * @covers ::preparePattern
      */
     public function testCreate(Composer $composer): void
     {
