@@ -30,7 +30,7 @@ class CandidateExtractor implements CandidateExtractorInterface
         SymbolIteratorInterface $symbols
     ): iterable {
         $repository = $composer->getRepositoryManager()->getLocalRepository();
-        $vendorPath = $composer->getConfig()->get('vendor-dir', 0);
+        $vendorPath = str_replace('\\', '/', $composer->getConfig()->get('vendor-dir', 0));
 
         $packages = [];
 
@@ -103,7 +103,7 @@ class CandidateExtractor implements CandidateExtractorInterface
 
         if (!array_key_exists($name, $packagesPerSymbol)) {
             $reflection = $this->getClassReflection($name);
-            $file       = $reflection->getFileName();
+            $file       = str_replace('\\', '/', $reflection->getFileName());
 
             // This happens for symbols in the current package.
             if (strpos($file, $vendorPath) !== 0) {
@@ -111,11 +111,11 @@ class CandidateExtractor implements CandidateExtractorInterface
             }
 
             $structure = explode(
-                DIRECTORY_SEPARATOR,
+                '/',
                 preg_replace(
                     sprintf(
                         '/^%s/',
-                        preg_quote($vendorPath . DIRECTORY_SEPARATOR, '/')
+                        preg_quote($vendorPath . '/', '/')
                     ),
                     '',
                     $file
