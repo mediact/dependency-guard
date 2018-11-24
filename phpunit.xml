@@ -3,8 +3,11 @@
           bootstrap="vendor/autoload.php">
     <testsuites>
         <testsuite name="default">
-            <directory>tests/Regression</directory>
             <directory>tests</directory>
+        </testsuite>
+        <testsuite name="coverage">
+            <directory>tests</directory>
+            <exclude>tests/Regression</exclude>
         </testsuite>
         <testsuite name="regression">
             <directory>tests/Regression</directory>
