@@ -31,7 +31,11 @@ class SourceFileIteratorFactoryTest extends TestCase
      *
      * @return void
      *
-     * @covers \Mediact\DependencyGuard\Composer\Iterator\SourceFileIteratorFactory
+     * @covers ::create
+     * @covers ::createFilesIterator
+     * @covers ::createNamespaceIterator
+     * @covers ::createClassmapIterator
+     * @covers ::preparePattern
      */
     public function testCreate(Composer $composer): void
     {
