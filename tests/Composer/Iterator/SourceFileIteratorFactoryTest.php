@@ -30,6 +30,8 @@ class SourceFileIteratorFactoryTest extends TestCase
      * @param Composer $composer
      *
      * @return void
+     *
+     * @covers \Mediact\DependencyGuard\Composer\Iterator\SourceFileIteratorFactory
      */
     public function testCreate(Composer $composer): void
     {
