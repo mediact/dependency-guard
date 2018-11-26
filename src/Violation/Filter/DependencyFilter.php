@@ -22,9 +22,6 @@ class DependencyFilter implements ViolationFilterInterface
     /** @var CompositeRepository */
     private $repository;
 
-    /** @var array */
-    private $dependencies;
-
     /**
      * Constructor.
      *
@@ -67,7 +64,7 @@ class DependencyFilter implements ViolationFilterInterface
                         )
                     );
                 },
-                $this->getDependencies($violation->getPackage()->getName())
+                $this->getDependents($violation->getPackage()->getName())
             ),
             function (bool $carry, ViolationInterface $violation): bool {
                 return $carry || $this->filter->__invoke($violation);
@@ -77,30 +74,33 @@ class DependencyFilter implements ViolationFilterInterface
     }
 
     /**
-     * Retrieves the dependencies of a package in a recursive way.
+     * Retrieves the dependents of a package in a recursive way.
      *
      * @param string $packageName
+     * @param array  $context
      *
      * @return array
      */
-    private function getDependencies(string $packageName): array
-    {
-        if (!isset($this->dependencies[$packageName])) {
-            $this->dependencies[$packageName] = $this->repository->getDependents(
+    private function getDependents(
+        string $packageName,
+        array $context = []
+    ): array {
+        if (!isset($context[$packageName])) {
+            $context[$packageName] = $this->repository->getDependents(
                 $packageName,
                 null,
                 false,
                 false
             );
 
-            foreach ($this->dependencies[$packageName] as $key => $dependent) {
-                $this->dependencies[$packageName] = array_merge(
-                    $this->dependencies[$packageName],
-                    $this->getDependencies($key)
+            foreach ($context[$packageName] as $key => $dependent) {
+                $context[$packageName] = array_merge(
+                    $context[$packageName],
+                    $this->getDependents($key)
                 );
             }
         }
 
-        return $this->dependencies[$packageName];
+        return $context[$packageName];
     }
 }

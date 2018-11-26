@@ -47,7 +47,7 @@ class DependencyFilterTest extends TestCase
      * @return void
      *
      * @covers ::__invoke
-     * @covers ::getDependencies
+     * @covers ::getDependents
      */
     public function testInvoke(
         RepositoryInterface $repository,
