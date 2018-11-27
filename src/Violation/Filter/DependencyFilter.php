@@ -64,7 +64,11 @@ class DependencyFilter implements ViolationFilterInterface
                         )
                     );
                 },
-                $this->getDependents($violation->getPackage()->getName())
+                $this->getDependents(
+                    $violation->getPackage()->getName(),
+                    false,
+                    []
+                )
             ),
             function (bool $carry, ViolationInterface $violation): bool {
                 return $carry || $this->filter->__invoke($violation);
@@ -77,12 +81,14 @@ class DependencyFilter implements ViolationFilterInterface
      * Retrieves the dependents of a package in a recursive way.
      *
      * @param string $packageName
+     * @param bool   $returnContext
      * @param array  $context
      *
      * @return array
      */
     private function getDependents(
         string $packageName,
+        bool $returnContext,
         array $context = []
     ): array {
         if (!isset($context[$packageName])) {
@@ -94,13 +100,23 @@ class DependencyFilter implements ViolationFilterInterface
             );
 
             foreach ($context[$packageName] as $key => $dependent) {
+                $dependentContext = $this->getDependents($key, true, $context);
+                $context          = array_merge(
+                    $context,
+                    $dependentContext
+                );
+
                 $context[$packageName] = array_merge(
                     $context[$packageName],
-                    $this->getDependents($key)
+                    $dependentContext[$key]
                 );
             }
         }
 
-        return $context[$packageName];
+        if (!$returnContext) {
+            return $context[$packageName];
+        }
+
+        return $context;
     }
 }
