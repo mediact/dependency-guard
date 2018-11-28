@@ -6,11 +6,11 @@
 
 namespace Mediact\DependencyGuard\Violation\Filter;
 
-use Composer\Composer;
 use Composer\Package\PackageInterface;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\RepositoryInterface;
 use Mediact\DependencyGuard\Candidate\Candidate;
+use Mediact\DependencyGuard\Composer\Repository\Dependent;
 use Mediact\DependencyGuard\Violation\Violation;
 use Mediact\DependencyGuard\Violation\ViolationInterface;
 
@@ -21,6 +21,9 @@ class DependencyFilter implements ViolationFilterInterface
 
     /** @var CompositeRepository */
     private $repository;
+
+    /** @var Dependent */
+    private $dependent;
 
     /**
      * Constructor.
@@ -34,6 +37,7 @@ class DependencyFilter implements ViolationFilterInterface
     ) {
         $this->filter     = $filter;
         $this->repository = new CompositeRepository([$repository]);
+        $this->dependent  = new Dependent($repository);
     }
 
     /**
@@ -64,7 +68,7 @@ class DependencyFilter implements ViolationFilterInterface
                         )
                     );
                 },
-                $this->getDependents(
+                $this->dependent->getDependents(
                     $violation->getPackage()->getName(),
                     false,
                     []
@@ -75,48 +79,5 @@ class DependencyFilter implements ViolationFilterInterface
             },
             false
         );
-    }
-
-    /**
-     * Retrieves the dependents of a package in a recursive way.
-     *
-     * @param string $packageName
-     * @param bool   $returnContext
-     * @param array  $context
-     *
-     * @return array
-     */
-    private function getDependents(
-        string $packageName,
-        bool $returnContext,
-        array $context = []
-    ): array {
-        if (!isset($context[$packageName])) {
-            $context[$packageName] = $this->repository->getDependents(
-                $packageName,
-                null,
-                false,
-                false
-            );
-
-            foreach ($context[$packageName] as $key => $dependent) {
-                $dependentContext = $this->getDependents($key, true, $context);
-                $context          = array_merge(
-                    $context,
-                    $dependentContext
-                );
-
-                $context[$packageName] = array_merge(
-                    $context[$packageName],
-                    $dependentContext[$key]
-                );
-            }
-        }
-
-        if (!$returnContext) {
-            return $context[$packageName];
-        }
-
-        return $context;
     }
 }
