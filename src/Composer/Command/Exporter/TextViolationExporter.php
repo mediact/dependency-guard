@@ -42,7 +42,7 @@ class TextViolationExporter implements ViolationExporterInterface
      */
     public function export(ViolationIteratorInterface $violations): void
     {
-        $root = $this->workingDirectory . DIRECTORY_SEPARATOR;
+        $root = preg_quote($this->workingDirectory . '/', '#');
 
         foreach ($violations as $violation) {
             $this->prompt->error($violation->getMessage());
