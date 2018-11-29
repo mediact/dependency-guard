@@ -4,7 +4,7 @@
  * https://www.mediact.nl
  */
 
-namespace Mediact\DependencyGuard\Tests\Composer\Iterator;
+namespace Mediact\DependencyGuard\Tests\Regression\Issue31;
 
 use Composer\Autoload\AutoloadGenerator;
 use Composer\Composer;
@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 use Mediact\DependencyGuard\Composer\Iterator\SourceFileIteratorFactory;
 
 /**
- * @coversDefaultClass \Mediact\DependencyGuard\Composer\Iterator\SourceFileIteratorFactory
+ * @see https://github.com/mediact/dependency-guard/issues/31
  */
 class SourceFileIteratorFactoryTest extends TestCase
 {
@@ -31,11 +31,7 @@ class SourceFileIteratorFactoryTest extends TestCase
      *
      * @return void
      *
-     * @covers ::create
-     * @covers ::createFilesIterator
-     * @covers ::createNamespaceIterator
-     * @covers ::createClassmapIterator
-     * @covers ::preparePattern
+     * @coversNothing
      */
     public function testCreate(Composer $composer): void
     {
@@ -232,7 +228,7 @@ class SourceFileIteratorFactoryTest extends TestCase
                                 __CLASS__ => __FILE__
                             ],
                             'exclude-from-classmap' => [
-                                __FILE__
+                                str_replace('/', '\\', __FILE__)
                             ]
                         ]
                     )
