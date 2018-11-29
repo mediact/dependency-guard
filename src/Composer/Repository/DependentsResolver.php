@@ -9,7 +9,7 @@ namespace Mediact\DependencyGuard\Composer\Repository;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\RepositoryInterface;
 
-class Dependent
+class DependentsResolver
 {
     /** @var CompositeRepository */
     private $repository;
@@ -25,6 +25,22 @@ class Dependent
     }
 
     /**
+     * Resolves the dependents of the package.
+     *
+     * @param string $packageName
+     *
+     * @return array
+     */
+    public function resolve(string $packageName): array
+    {
+        return $this->getDependents(
+            $packageName,
+            false,
+            []
+        );
+    }
+
+    /**
      * Retrieves the dependents of a package in a recursive way.
      *
      * @param string $packageName
@@ -33,7 +49,7 @@ class Dependent
      *
      * @return array
      */
-    public function getDependents(
+    private function getDependents(
         string $packageName,
         bool $returnContext,
         array $context = []

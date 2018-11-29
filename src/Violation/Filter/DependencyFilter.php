@@ -10,7 +10,7 @@ use Composer\Package\PackageInterface;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\RepositoryInterface;
 use Mediact\DependencyGuard\Candidate\Candidate;
-use Mediact\DependencyGuard\Composer\Repository\Dependent;
+use Mediact\DependencyGuard\Composer\Repository\DependentsResolver;
 use Mediact\DependencyGuard\Violation\Violation;
 use Mediact\DependencyGuard\Violation\ViolationInterface;
 
@@ -22,8 +22,8 @@ class DependencyFilter implements ViolationFilterInterface
     /** @var CompositeRepository */
     private $repository;
 
-    /** @var Dependent */
-    private $dependent;
+    /** @var DependentsResolver */
+    private $dependentsResolver;
 
     /**
      * Constructor.
@@ -35,9 +35,9 @@ class DependencyFilter implements ViolationFilterInterface
         RepositoryInterface $repository,
         ViolationFilterInterface $filter
     ) {
-        $this->filter     = $filter;
-        $this->repository = new CompositeRepository([$repository]);
-        $this->dependent  = new Dependent($repository);
+        $this->filter             = $filter;
+        $this->repository         = new CompositeRepository([$repository]);
+        $this->dependentsResolver = new DependentsResolver($repository);
     }
 
     /**
@@ -68,10 +68,8 @@ class DependencyFilter implements ViolationFilterInterface
                         )
                     );
                 },
-                $this->dependent->getDependents(
-                    $violation->getPackage()->getName(),
-                    false,
-                    []
+                $this->dependentsResolver->resolve(
+                    $violation->getPackage()->getName()
                 )
             ),
             function (bool $carry, ViolationInterface $violation): bool {

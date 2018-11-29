@@ -8,16 +8,16 @@ namespace Mediact\DependencyGuard\Tests\Composer\Repository;
 
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\RepositoryInterface;
-use Mediact\DependencyGuard\Composer\Repository\Dependent;
+use Mediact\DependencyGuard\Composer\Repository\DependentsResolver;
 use PHPUnit\Framework\TestCase;
 use Composer\Package\Link;
 use Composer\Package\PackageInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
- * @coversDefaultClass \Mediact\DependencyGuard\Composer\Repository\Dependent
+ * @coversDefaultClass \Mediact\DependencyGuard\Composer\Repository\DependentsResolver
  */
-class DependentTest extends TestCase
+class DependentResolverTest extends TestCase
 {
     /**
      * @return void
@@ -27,8 +27,8 @@ class DependentTest extends TestCase
     public function testConstruct(): void
     {
         $this->assertInstanceOf(
-            Dependent::class,
-            new Dependent(
+            DependentsResolver::class,
+            new DependentsResolver(
                 $this->createMock(RepositoryInterface::class)
             )
         );
@@ -43,17 +43,18 @@ class DependentTest extends TestCase
      *
      * @return void
      *
+     * @covers ::resolve
      * @covers ::getDependents
      */
-    public function testGetDependents(
+    public function testResolve(
         RepositoryInterface $repository,
         string $packageName,
         array $expected
     ): void {
-        $subject = new Dependent($repository);
+        $subject = new DependentsResolver($repository);
         $this->assertEquals(
             $expected,
-            array_keys($subject->getDependents($packageName, false, []))
+            array_keys($subject->resolve($packageName))
         );
     }
 
@@ -71,11 +72,11 @@ class DependentTest extends TestCase
         RepositoryInterface $repository,
         string $packageName
     ): void {
-        $subject = new Dependent($repository);
+        $subject = new DependentsResolver($repository);
         $legacy  = new CompositeRepository([$repository]);
         $this->assertEquals(
             $legacy->getDependents($packageName),
-            $subject->getDependents($packageName, false, [])
+            $subject->resolve($packageName)
         );
     }
 
