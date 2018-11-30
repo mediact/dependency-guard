@@ -9,7 +9,7 @@ namespace Mediact\DependencyGuard\Composer\Repository;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\RepositoryInterface;
 
-class DependentsResolver
+class DependentsResolver implements DependentsResolverInterface
 {
     /** @var CompositeRepository */
     private $repository;
