@@ -6,11 +6,11 @@
 
 namespace Mediact\DependencyGuard\Violation\Filter;
 
-use Composer\Composer;
 use Composer\Package\PackageInterface;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\RepositoryInterface;
 use Mediact\DependencyGuard\Candidate\Candidate;
+use Mediact\DependencyGuard\Composer\Repository\DependentsResolver;
 use Mediact\DependencyGuard\Violation\Violation;
 use Mediact\DependencyGuard\Violation\ViolationInterface;
 
@@ -22,6 +22,9 @@ class DependencyFilter implements ViolationFilterInterface
     /** @var CompositeRepository */
     private $repository;
 
+    /** @var DependentsResolver */
+    private $dependentsResolver;
+
     /**
      * Constructor.
      *
@@ -32,8 +35,9 @@ class DependencyFilter implements ViolationFilterInterface
         RepositoryInterface $repository,
         ViolationFilterInterface $filter
     ) {
-        $this->filter     = $filter;
-        $this->repository = new CompositeRepository([$repository]);
+        $this->filter             = $filter;
+        $this->repository         = new CompositeRepository([$repository]);
+        $this->dependentsResolver = new DependentsResolver($repository);
     }
 
     /**
@@ -52,7 +56,6 @@ class DependencyFilter implements ViolationFilterInterface
                 ) use ($violation): ViolationInterface {
                     /** @var PackageInterface $package */
                     [$package] = $dependent;
-
                     return new Violation(
                         sprintf(
                             'Package "%s" provides violating package "%s".',
@@ -65,7 +68,7 @@ class DependencyFilter implements ViolationFilterInterface
                         )
                     );
                 },
-                $this->repository->getDependents(
+                $this->dependentsResolver->resolve(
                     $violation->getPackage()->getName()
                 )
             ),
