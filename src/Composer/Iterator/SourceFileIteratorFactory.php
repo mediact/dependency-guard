@@ -141,26 +141,21 @@ class SourceFileIteratorFactory implements FileIteratorFactoryInterface
             );
         }
 
-        return new class ($files, ...$exclude) extends FilterIterator {
+        return new class ($files, $this->preparePattern(...$exclude)) extends FilterIterator {
             /** @var string|null */
             private $excludePattern;
 
             /**
              * Constructor.
              *
-             * @param Iterator $iterator
-             * @param string   ...$excludePatterns
+             * @param Iterator    $iterator
+             * @param string|null $excludePattern
              */
             public function __construct(
                 Iterator $iterator,
-                string ...$excludePatterns
+                ?string $excludePattern
             ) {
-                if (!empty($excludePatterns)) {
-                    $this->excludePattern = sprintf(
-                        '@^(%s)$@',
-                        implode('|', $excludePatterns)
-                    );
-                }
+                $this->excludePattern = $excludePattern;
 
                 parent::__construct($iterator);
             }
@@ -181,11 +176,39 @@ class SourceFileIteratorFactory implements FileIteratorFactoryInterface
                         $this->excludePattern === null
                         ?: !preg_match(
                             $this->excludePattern,
-                            $file->getRealPath()
+                            str_replace('\\', '/', $file->getRealPath())
                         )
                     )
                 );
             }
         };
+    }
+
+    /**
+     * @param string ...$excludePatterns
+     *
+     * @return string|null
+     */
+    private function preparePattern(string ...$excludePatterns): ?string
+    {
+        if (count($excludePatterns) === 0) {
+            return null;
+        }
+
+        return sprintf(
+            '@^(%s)$@',
+            implode(
+                '|',
+                array_map(
+                    function (string $pattern): string {
+                        return preg_quote(
+                            str_replace('\\', '/', $pattern),
+                            '@'
+                        );
+                    },
+                    $excludePatterns
+                )
+            )
+        );
     }
 }

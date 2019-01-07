@@ -20,10 +20,11 @@
     "minimum-stability": "stable",
     "require": {
         "php": "^7.1",
-        "composer/composer": "^1.6",
         "composer-plugin-api": "^1.1",
+        "composer/composer": "^1.6",
         "nikic/php-parser": "^3.0 | ^4.0",
-        "roave/better-reflection": "^2.0 | ^3.1"
+        "roave/better-reflection": "^2.0 | ^3.1",
+        "symfony/options-resolver": "^4.1"
     },
     "require-dev": {
         "symfony/process": "@stable",

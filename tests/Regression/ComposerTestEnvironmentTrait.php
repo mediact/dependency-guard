@@ -44,6 +44,7 @@ trait ComposerTestEnvironmentTrait
         return new Process(
             array_merge(
                 [
+                    PHP_BINARY,
                     trim(`which composer` ?? `which composer.phar`),
                     $command,
                 ],
