@@ -9,6 +9,10 @@ namespace Mediact\DependencyGuard\Composer\Repository;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\RepositoryInterface;
 
+/**
+ * @deprecated The conceptual difference between dependents in Composer and
+ *   DependencyGuard is too great to rely on the output of a dependents resolver.
+ */
 class DependentsResolver implements DependentsResolverInterface
 {
     /** @var CompositeRepository */

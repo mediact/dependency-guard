@@ -14,6 +14,10 @@ use Mediact\DependencyGuard\Composer\Repository\DependentsResolver;
 use Mediact\DependencyGuard\Violation\Violation;
 use Mediact\DependencyGuard\Violation\ViolationInterface;
 
+/**
+ * @deprecated The conceptual difference between dependents in Composer and
+ *   DependencyGuard is too great to rely on the output of a dependents resolver.
+ */
 class DependencyFilter implements ViolationFilterInterface
 {
     /** @var ViolationFilterInterface */
