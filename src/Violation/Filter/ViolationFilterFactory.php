@@ -28,10 +28,8 @@ class ViolationFilterFactory implements ViolationFilterFactoryInterface
 
         return new ViolationFilterChain(
             $chain,
-            new DependencyFilter(
-                $composer
-                    ->getRepositoryManager()
-                    ->getLocalRepository(),
+            new PackageRequirementsFilter(
+                $composer->getLocker(),
                 $chain
             )
         );
