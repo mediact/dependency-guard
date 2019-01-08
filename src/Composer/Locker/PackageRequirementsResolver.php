@@ -17,10 +17,12 @@ class PackageRequirementsResolver implements PackageRequirementsResolverInterfac
 
     /**
      * Constructor.
+     *
+     * @param SplObjectStorage|null $resolvedLockers
      */
-    public function __construct()
+    public function __construct(SplObjectStorage $resolvedLockers = null)
     {
-        $this->resolvedLockers = new SplObjectStorage();
+        $this->resolvedLockers = $resolvedLockers ?? new SplObjectStorage();
     }
 
     /**
