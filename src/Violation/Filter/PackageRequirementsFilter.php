@@ -7,8 +7,10 @@
 namespace Mediact\DependencyGuard\Violation\Filter;
 
 use Composer\Package\Locker;
-use Composer\Package\Package;
+use Composer\Package\PackageInterface;
 use Mediact\DependencyGuard\Candidate\Candidate;
+use Mediact\DependencyGuard\Composer\Locker\PackageRequirementsResolver;
+use Mediact\DependencyGuard\Composer\Locker\PackageRequirementsResolverInterface;
 use Mediact\DependencyGuard\Violation\Violation;
 use Mediact\DependencyGuard\Violation\ViolationInterface;
 
@@ -20,21 +22,24 @@ class PackageRequirementsFilter implements ViolationFilterInterface
     /** @var ViolationFilterInterface */
     private $filter;
 
-    /** @var array|null */
-    private $graph;
+    /** @var PackageRequirementsResolverInterface */
+    private $resolver;
 
     /**
      * Constructor.
      *
-     * @param Locker                   $locker
-     * @param ViolationFilterInterface $filter
+     * @param Locker                                    $locker
+     * @param ViolationFilterInterface                  $filter
+     * @param PackageRequirementsResolverInterface|null $resolver
      */
     public function __construct(
         Locker $locker,
-        ViolationFilterInterface $filter
+        ViolationFilterInterface $filter,
+        PackageRequirementsResolverInterface $resolver = null
     ) {
-        $this->locker = $locker;
-        $this->filter = $filter;
+        $this->locker   = $locker;
+        $this->filter   = $filter;
+        $this->resolver = $resolver ?? new PackageRequirementsResolver();
     }
 
     /**
@@ -49,14 +54,8 @@ class PackageRequirementsFilter implements ViolationFilterInterface
         return array_reduce(
             array_map(
                 function (
-                    string $dependent
+                    PackageInterface $package
                 ) use ($violation): ViolationInterface {
-                    $package = $this
-                        ->locker
-                        ->getLockedRepository()
-                        ->findPackage($dependent, '*')
-                        ?? new Package($dependent, '?', '?');
-
                     return new Violation(
                         sprintf(
                             'Package "%s" provides violating package "%s".',
@@ -69,8 +68,9 @@ class PackageRequirementsFilter implements ViolationFilterInterface
                         )
                     );
                 },
-                $this->getDependents(
-                    $violation->getPackage()->getName()
+                $this->resolver->getDependents(
+                    $violation->getPackage()->getName(),
+                    $this->locker
                 )
             ),
             function (bool $carry, ViolationInterface $violation): bool {
@@ -78,88 +78,5 @@ class PackageRequirementsFilter implements ViolationFilterInterface
             },
             false
         );
-    }
-
-    /**
-     * Get a list of dependents for the given package.
-     *
-     * @param string $package
-     *
-     * @return string[]
-     */
-    private function getDependents(string $package): array
-    {
-        if ($this->graph === null) {
-            $this->graph = $this->resolveGraph(
-                ...($this->locker->getLockData()['packages'] ?? [])
-            );
-        }
-
-        return $this->graph[$package] ?? [];
-    }
-
-    /**
-     * Resolve the dependents graph for the given packages.
-     *
-     * @param array ...$packages
-     *
-     * @return string[]
-     */
-    private function resolveGraph(array ...$packages): array
-    {
-        $graph = array_reduce(
-            $packages,
-            function (array $carry, array $package): array {
-                foreach (array_keys($package['require'] ?? []) as $link) {
-                    if (!preg_match('/^[^\/]+\/[^\/]+$/', $link)) {
-                        // Most likely a platform requirement.
-                        // E.g.: php
-                        // E.g.: ext-openssl
-                        continue;
-                    }
-
-                    if (!array_key_exists($link, $carry)) {
-                        $carry[$link] = [];
-                    }
-
-                    if (!in_array($package['name'], $carry[$link], true)) {
-                        $carry[$link][] = $package['name'];
-                    }
-                }
-
-                return $carry;
-            },
-            []
-        );
-
-        // While the graph keeps receiving updates, keep on resolving.
-        for ($previousGraph = []; $graph !== $previousGraph;) {
-            // Do not update the previous graph before the current iteration
-            // has started.
-            $previousGraph = $graph;
-
-            // For each package and its dependents in the graph ...
-            foreach ($graph as $package => $dependents) {
-                // ... Update the dependents of the package with grandparents.
-                $graph[$package] = array_reduce(
-                    // Determine grandparents by looking up the parents of the
-                    // available dependents.
-                    $dependents,
-                    function (array $carry, string $parent) use ($graph): array {
-                        foreach ($graph[$parent] ?? [] as $grandparent) {
-                            if (!in_array($grandparent, $carry, true)) {
-                                $carry[] = $grandparent;
-                            }
-                        }
-
-                        return $carry;
-                    },
-                    // Start out with the current list of dependents.
-                    $dependents
-                );
-            }
-        }
-
-        return $graph;
     }
 }
