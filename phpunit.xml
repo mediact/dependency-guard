@@ -4,14 +4,19 @@
     <testsuites>
         <testsuite name="default">
             <directory>tests/Regression</directory>
+            <directory>tests/Functional</directory>
             <directory>tests</directory>
         </testsuite>
         <testsuite name="coverage">
             <directory>tests</directory>
             <exclude>tests/Regression</exclude>
+            <exclude>tests/Functional</exclude>
         </testsuite>
         <testsuite name="regression">
             <directory>tests/Regression</directory>
+        </testsuite>
+        <testsuite name="functional">
+            <directory>tests/Functional</directory>
         </testsuite>
     </testsuites>
     <filter>
