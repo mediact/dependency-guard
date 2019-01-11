@@ -2,6 +2,7 @@ imports:
   - resource: vendor/mediact/testing-suite/config/default/grumphp.yml
 
 parameters:
+  process_timeout: 300
   tasks:
     composer:
       strict: true

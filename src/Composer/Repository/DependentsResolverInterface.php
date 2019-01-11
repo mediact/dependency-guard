@@ -6,6 +6,10 @@
 
 namespace Mediact\DependencyGuard\Composer\Repository;
 
+/**
+ * @deprecated The conceptual difference between dependents in Composer and
+ *   DependencyGuard is too great to rely on the output of a dependents resolver.
+ */
 interface DependentsResolverInterface
 {
     /**

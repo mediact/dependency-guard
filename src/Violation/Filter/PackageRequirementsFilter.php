@@ -6,42 +6,40 @@
 
 namespace Mediact\DependencyGuard\Violation\Filter;
 
+use Composer\Package\Locker;
 use Composer\Package\PackageInterface;
-use Composer\Repository\CompositeRepository;
-use Composer\Repository\RepositoryInterface;
 use Mediact\DependencyGuard\Candidate\Candidate;
-use Mediact\DependencyGuard\Composer\Repository\DependentsResolver;
+use Mediact\DependencyGuard\Composer\Locker\PackageRequirementsResolver;
+use Mediact\DependencyGuard\Composer\Locker\PackageRequirementsResolverInterface;
 use Mediact\DependencyGuard\Violation\Violation;
 use Mediact\DependencyGuard\Violation\ViolationInterface;
 
-/**
- * @deprecated The conceptual difference between dependents in Composer and
- *   DependencyGuard is too great to rely on the output of a dependents resolver.
- */
-class DependencyFilter implements ViolationFilterInterface
+class PackageRequirementsFilter implements ViolationFilterInterface
 {
+    /** @var Locker */
+    private $locker;
+
     /** @var ViolationFilterInterface */
     private $filter;
 
-    /** @var CompositeRepository */
-    private $repository;
-
-    /** @var DependentsResolver */
-    private $dependentsResolver;
+    /** @var PackageRequirementsResolverInterface */
+    private $resolver;
 
     /**
      * Constructor.
      *
-     * @param RepositoryInterface      $repository
-     * @param ViolationFilterInterface $filter
+     * @param Locker                                    $locker
+     * @param ViolationFilterInterface                  $filter
+     * @param PackageRequirementsResolverInterface|null $resolver
      */
     public function __construct(
-        RepositoryInterface $repository,
-        ViolationFilterInterface $filter
+        Locker $locker,
+        ViolationFilterInterface $filter,
+        PackageRequirementsResolverInterface $resolver = null
     ) {
-        $this->filter             = $filter;
-        $this->repository         = new CompositeRepository([$repository]);
-        $this->dependentsResolver = new DependentsResolver($repository);
+        $this->locker   = $locker;
+        $this->filter   = $filter;
+        $this->resolver = $resolver ?? new PackageRequirementsResolver();
     }
 
     /**
@@ -56,10 +54,8 @@ class DependencyFilter implements ViolationFilterInterface
         return array_reduce(
             array_map(
                 function (
-                    array $dependent
+                    PackageInterface $package
                 ) use ($violation): ViolationInterface {
-                    /** @var PackageInterface $package */
-                    [$package] = $dependent;
                     return new Violation(
                         sprintf(
                             'Package "%s" provides violating package "%s".',
@@ -72,8 +68,9 @@ class DependencyFilter implements ViolationFilterInterface
                         )
                     );
                 },
-                $this->dependentsResolver->resolve(
-                    $violation->getPackage()->getName()
+                $this->resolver->getDependents(
+                    $violation->getPackage()->getName(),
+                    $this->locker
                 )
             ),
             function (bool $carry, ViolationInterface $violation): bool {
