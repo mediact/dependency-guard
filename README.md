@@ -1,12 +1,12 @@
-[![Packagist](https://img.shields.io/packagist/dt/mediact/dependency-guard.png)](https://packagist.org/packages/mediact/dependency-guard/stats)
-[![Packagist](https://img.shields.io/packagist/v/mediact/dependency-guard.png)](https://packagist.org/packages/mediact/dependency-guard)
-[![PHP from Packagist](https://img.shields.io/packagist/php-v/mediact/dependency-guard.png)](https://packagist.org/packages/mediact/dependency-guard)
+[![Packagist](https://img.shields.io/packagist/dt/mediact/dependency-guard.svg)](https://packagist.org/packages/mediact/dependency-guard/stats)
+[![Packagist](https://img.shields.io/packagist/v/mediact/dependency-guard.svg)](https://packagist.org/packages/mediact/dependency-guard)
+[![PHP from Packagist](https://img.shields.io/packagist/php-v/mediact/dependency-guard.svg)](https://packagist.org/packages/mediact/dependency-guard)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mediact/dependency-guard/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mediact/dependency-guard/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/mediact/dependency-guard/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/mediact/dependency-guard/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/mediact/dependency-guard/badges/build.png?b=master)](https://scrutinizer-ci.com/g/mediact/dependency-guard/build-status/master)
 [![Build status](https://ci.appveyor.com/api/projects/status/79f486l0u1p2i5gq/branch/master?svg=true)](https://ci.appveyor.com/project/mediactbv/dependency-guard/branch/master)
 [![Code Intelligence Status](https://scrutinizer-ci.com/g/mediact/dependency-guard/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
-[![license](https://img.shields.io/github/license/mediact/dependency-guard.png)](LICENSE.md)
+[![license](https://img.shields.io/github/license/mediact/dependency-guard.svg)](LICENSE.md)
 
 
 # Introduction
