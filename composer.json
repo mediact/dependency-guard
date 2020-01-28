@@ -1,5 +1,8 @@
 {
-    "name": "mediact/dependency-guard",
+    "name": "axent96/dependency-guard",
+    "replace": {
+        "mediact/dependency-guard":"1.1.0"
+    },
     "description": "Static production dependency analysis.",
     "type": "composer-plugin",
     "license": "MIT",
