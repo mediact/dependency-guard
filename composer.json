@@ -3,7 +3,7 @@
     "description": "Static production dependency analysis.",
     "type": "composer-plugin",
     "license": "MIT",
-    "abandon": "maglnet/composer-require-checker",
+    "abandoned": "maglnet/composer-require-checker",
     "authors": [
         {
             "name": "MediaCT",
