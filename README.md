@@ -1,3 +1,15 @@
+# Abandoned
+
+This package is abandoned in favor of
+[`maglnet/composer-require-checker`](https://packagist.org/packages/maglnet/composer-require-checker),
+which is well maintained and is
+[natively supported by GrumPHP](https://github.com/phpro/grumphp/blob/master/doc/tasks/composer_require_checker.md).
+Composer require checker is more rich in
+[features](https://github.com/maglnet/ComposerRequireChecker/blob/3.4.x/data/config.dist.json),
+it is kept up-to-date, and importantly, uses the same
+[MIT license](https://github.com/maglnet/ComposerRequireChecker/blob/3.4.x/LICENSE).
+
+
 [![Packagist](https://img.shields.io/packagist/dt/mediact/dependency-guard.png)](https://packagist.org/packages/mediact/dependency-guard/stats)
 [![Packagist](https://img.shields.io/packagist/v/mediact/dependency-guard.png)](https://packagist.org/packages/mediact/dependency-guard)
 [![PHP from Packagist](https://img.shields.io/packagist/php-v/mediact/dependency-guard.png)](https://packagist.org/packages/mediact/dependency-guard)
